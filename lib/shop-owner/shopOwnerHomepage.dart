@@ -1,4 +1,7 @@
 import 'package:e_shop/shop-owner/addProduct.dart';
+import 'package:e_shop/shop-owner/addSales.dart';
+import 'package:e_shop/shop-owner/salesList.dart';
+import 'package:e_shop/shop-owner/shopProgressChart.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -93,9 +96,9 @@ class _ShopOwnerHomepageState extends State<ShopOwnerHomepage> {
         body: IndexedStack(
           index: _currentIndex,
           children: [
-            ProductList(),
-            AddProduct(),
-            Profile(),
+            SalesList(),
+            AddSales(),
+            BarChartSample1(),
 
             // HomePage(),
           ],

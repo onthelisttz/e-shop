@@ -1,5 +1,8 @@
+import 'package:e_shop/shop-owner/addExpenses.dart';
 import 'package:e_shop/shop-owner/addProduct.dart';
 import 'package:e_shop/shop-owner/addSales.dart';
+import 'package:e_shop/shop-owner/dashbord.dart';
+import 'package:e_shop/shop-owner/listExpenses.dart';
 import 'package:e_shop/shop-owner/salesList.dart';
 import 'package:e_shop/shop-owner/shopProgressChart.dart';
 import 'package:flutter/cupertino.dart';
@@ -77,12 +80,12 @@ class _ShopOwnerHomepageState extends State<ShopOwnerHomepage> {
     return WillPopScope(
       onWillPop: () async {
         final difference = DateTime.now().difference(timeBackPressed);
-        final isExitWarning = difference >= Duration(seconds: 2);
+        final isExitWarning = difference >= const Duration(seconds: 2);
         timeBackPressed = DateTime.now();
         if (isExitWarning) {
           const message = 'Press back again to exit';
           Fluttertoast.showToast(
-              backgroundColor: Color(0xFFf2f2f2),
+              backgroundColor: const Color(0xFFf2f2f2),
               textColor: Colors.black,
               msg: message,
               fontSize: 18);
@@ -96,37 +99,47 @@ class _ShopOwnerHomepageState extends State<ShopOwnerHomepage> {
         body: IndexedStack(
           index: _currentIndex,
           children: [
-            SalesList(),
-            AddSales(),
-            BarChartSample1(),
+            Dashbord(),
+
+            const ProductList(),
+
+            const SalesList(),
+            const ExpensesList(),
+            const Profile()
 
             // HomePage(),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: _currentIndex!,
-          fixedColor: Color(0xFF009999),
+          fixedColor: const Color(0xFFe26f39),
           type: BottomNavigationBarType.fixed,
           items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              backgroundColor: Color(0xFF009999),
-              label: 'products',
+              backgroundColor: Color(0xFFe26f39),
+              label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.access_alarm),
-              backgroundColor: Color(0xFF009999),
-              label: 'Add Product',
+              icon: Icon(Icons.newspaper),
+              backgroundColor: Color(0xFFe26f39),
+              label: 'Products',
             ),
-            // BottomNavigationBarItem(
-            //   // icon: Icon(MdiIcons.bookmark),
-            //   icon: Icon(Icons.newspaper),
-            //   backgroundColor: Color(0xFF009999),
-            //   label: 'Reminders',
-            // ),
+            BottomNavigationBarItem(
+              // icon: Icon(MdiIcons.bookmark),
+              icon: Icon(Icons.production_quantity_limits),
+              backgroundColor: Color(0xFFe26f39),
+              label: 'Sales',
+            ),
+            BottomNavigationBarItem(
+              // icon: Icon(MdiIcons.bookmark),
+              icon: Icon(Icons.card_giftcard_outlined),
+              backgroundColor: Color(0xFFe26f39),
+              label: 'Expenses',
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person),
-              backgroundColor: Color(0xFF009999),
+              backgroundColor: Color(0xFFe26f39),
               label: 'Profile',
             ),
           ],

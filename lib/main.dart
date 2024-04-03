@@ -83,6 +83,8 @@ class MyApp extends StatelessWidget {
 // #f05929
 // rename setAppName --targets ios,android --value "E-lawyer"
 // adb connect 10.25.202.202:5555
+// adb connect 192.168.1.154:5555
+// adb tcpip 5555
 
 class RoleChecker extends StatefulWidget {
   const RoleChecker({Key? key}) : super(key: key);
@@ -158,7 +160,7 @@ class _RoleCheckerState extends State<RoleChecker> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: Container(),
+      body: Center(child: CircularProgressIndicator()),
     ); // You can return an empty container here
   }
 }

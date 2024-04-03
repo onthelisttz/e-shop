@@ -43,6 +43,18 @@ String readTimestamp2(Timestamp timestamp) {
   return time;
 }
 
+String readTimestamp3(Timestamp timestamp) {
+  var now = DateTime.now();
+  var format = DateFormat('d, MMM');
+  var date = timestamp.toDate();
+  var diff = now.difference(date);
+  var time = '';
+
+  time = format.format(date);
+
+  return time;
+}
+
 class proressDialogue extends StatelessWidget {
   String messsage;
   proressDialogue({

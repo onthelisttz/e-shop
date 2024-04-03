@@ -75,7 +75,7 @@ class _ProfileState extends State<Profile> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   CircleAvatar(
-                                    backgroundColor: Color(0xFF009999),
+                                    backgroundColor: Color(0xFFe26f39),
                                     radius: 62,
                                     child: ClipOval(
                                       child: data['PhotoUrl'] == null
@@ -153,7 +153,7 @@ class _ProfileState extends State<Profile> {
                               ElevatedButton(
                                   style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(
-                                      Color(0xFF009999),
+                                      Color(0xFFe26f39),
                                     ),
                                   ),
                                   onPressed: () async {

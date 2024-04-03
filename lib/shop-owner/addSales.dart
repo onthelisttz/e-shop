@@ -19,6 +19,7 @@ TextEditingController productNametextEditingController =
 TextEditingController priceEditingController = TextEditingController();
 
 TextEditingController quantiyEditingController = TextEditingController();
+TextEditingController codeEditingController = TextEditingController();
 
 // TextEditingController descrptionEditingController = TextEditingController();
 
@@ -33,24 +34,32 @@ class _RegisterClassState extends State<AddSales> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF009999),
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: false,
         titleSpacing: 0,
         centerTitle: true,
         elevation: 0,
-        title: Text(
-          'Add Product',
-          style: TextStyle(fontSize: 11, letterSpacing: 1, color: Colors.white),
-        ),
+        title: Text("Add Sales",
+            style:
+                TextStyle(color: Colors.black.withOpacity(0.9), fontSize: 14)),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 18,
+              color: Color(0xFFe26f39),
+            )),
       ),
       body: Form(
         key: AddSalesKey,
         child: Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: ListView(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 18, left: 18, right: 18),
+              const Padding(
+                padding: EdgeInsets.only(top: 18, left: 18, right: 18),
                 child: Text(
                   'Product Name.',
                   style: TextStyle(
@@ -60,16 +69,17 @@ class _RegisterClassState extends State<AddSales> {
               Padding(
                 padding: const EdgeInsets.only(top: 1, left: 18, right: 18),
                 child: TextFormField(
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 14, letterSpacing: 1, color: Colors.black),
                   controller: productNametextEditingController,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
-                    fillColor: Color(0xFF009999),
+                    fillColor: const Color(0xFFf2dfce),
                     filled: true,
                     border: InputBorder.none,
                     suffixIcon: IconButton(
-                      color: Color.fromARGB(255, 177, 237, 237),
-                      icon: Icon(
+                      color: const Color(0xFFe26f39),
+                      icon: const Icon(
                         Icons.close,
                         size: 16,
                       ),
@@ -77,13 +87,13 @@ class _RegisterClassState extends State<AddSales> {
                         productNametextEditingController.clear();
                       },
                     ),
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.title,
                       size: 16,
-                      color: Color.fromARGB(255, 177, 237, 237),
+                      color: Color(0xFFe26f39),
                     ),
-                    hintStyle: TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
+                    hintStyle: const TextStyle(
+                        fontSize: 11, letterSpacing: 1, color: Colors.black),
                     hintText: "Eg. Phone",
                   ),
                   validator: (String? value) {
@@ -93,10 +103,10 @@ class _RegisterClassState extends State<AddSales> {
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 18, left: 18, right: 18),
+              const Padding(
+                padding: EdgeInsets.only(top: 18, left: 18, right: 18),
                 child: Text(
-                  'Buying Price.',
+                  'Price.',
                   style: TextStyle(
                       fontSize: 14, letterSpacing: 1, color: Colors.black),
                 ),
@@ -104,16 +114,17 @@ class _RegisterClassState extends State<AddSales> {
               Padding(
                 padding: const EdgeInsets.only(top: 1, left: 18, right: 18),
                 child: TextFormField(
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 14, letterSpacing: 1, color: Colors.black),
                   controller: priceEditingController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    fillColor: Color(0xFF009999),
+                    fillColor: const Color(0xFFf2dfce),
                     filled: true,
                     border: InputBorder.none,
                     suffixIcon: IconButton(
-                      color: Color.fromARGB(255, 177, 237, 237),
-                      icon: Icon(
+                      color: const Color(0xFFe26f39),
+                      icon: const Icon(
                         Icons.close,
                         size: 16,
                       ),
@@ -121,13 +132,13 @@ class _RegisterClassState extends State<AddSales> {
                         priceEditingController.clear();
                       },
                     ),
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.price_change,
                       size: 16,
-                      color: Color.fromARGB(255, 177, 237, 237),
+                      color: Color(0xFFe26f39),
                     ),
-                    hintStyle: TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
+                    hintStyle: const TextStyle(
+                        fontSize: 11, letterSpacing: 1, color: Colors.black),
                     hintText: "Eg. 200000",
                   ),
                   validator: (String? value) {
@@ -137,8 +148,8 @@ class _RegisterClassState extends State<AddSales> {
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(top: 19, left: 18, right: 18),
+              const Padding(
+                padding: EdgeInsets.only(top: 19, left: 18, right: 18),
                 child: Text(
                   'Quantity.',
                   style: TextStyle(
@@ -148,15 +159,16 @@ class _RegisterClassState extends State<AddSales> {
               Padding(
                 padding: const EdgeInsets.only(left: 18, right: 18),
                 child: TextFormField(
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                      fontSize: 14, letterSpacing: 1, color: Colors.black),
                   controller: quantiyEditingController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
-                    fillColor: Color(0xFF009999),
+                    fillColor: const Color(0xFFf2dfce),
                     filled: true,
                     suffixIcon: IconButton(
-                      color: Color.fromARGB(255, 177, 237, 237),
-                      icon: Icon(
+                      color: const Color(0xFFe26f39),
+                      icon: const Icon(
                         Icons.close,
                         size: 16,
                       ),
@@ -164,14 +176,14 @@ class _RegisterClassState extends State<AddSales> {
                         quantiyEditingController.clear();
                       },
                     ),
-                    prefixIcon: Icon(
+                    prefixIcon: const Icon(
                       Icons.sanitizer_outlined,
                       size: 16,
-                      color: Color.fromARGB(255, 177, 237, 237),
+                      color: Color(0xFFe26f39),
                     ),
                     border: InputBorder.none,
-                    hintStyle: TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
+                    hintStyle: const TextStyle(
+                        fontSize: 11, letterSpacing: 1, color: Colors.black),
                     hintText: "Write a total size",
                   ),
                   validator: (String? value) {
@@ -181,15 +193,60 @@ class _RegisterClassState extends State<AddSales> {
                   },
                 ),
               ),
+              const Padding(
+                padding: EdgeInsets.only(top: 19, left: 18, right: 18),
+                child: Text(
+                  'Code.',
+                  style: TextStyle(
+                      fontSize: 14, letterSpacing: 1, color: Colors.black),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 18, right: 18),
+                child: TextFormField(
+                  style: TextStyle(
+                      fontSize: 14, letterSpacing: 1, color: Colors.black),
+                  controller: codeEditingController,
+                  keyboardType: TextInputType.text,
+                  decoration: InputDecoration(
+                    fillColor: const Color(0xFFf2dfce),
+                    filled: true,
+                    suffixIcon: IconButton(
+                      color: const Color(0xFFe26f39),
+                      icon: const Icon(
+                        Icons.close,
+                        size: 16,
+                      ),
+                      onPressed: () {
+                        codeEditingController.clear();
+                      },
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.sanitizer_outlined,
+                      size: 16,
+                      color: Color(0xFFe26f39),
+                    ),
+                    border: InputBorder.none,
+                    hintStyle: const TextStyle(
+                        fontSize: 11, letterSpacing: 1, color: Colors.black),
+                    hintText: "product Code",
+                  ),
+                  validator: (String? value) {
+                    if (value!.isEmpty) {
+                      return "code is required";
+                    }
+                  },
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: OutlinedButton(
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
-                          const Color(0xFF009999),
+                          const Color(0xFFf2dfce),
                         ),
-                        side: MaterialStateProperty.all(BorderSide(
-                          color: Color.fromARGB(255, 177, 237, 237),
+                        side: MaterialStateProperty.all(const BorderSide(
+                          color: Color(0xFFe26f39),
                         )),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -203,13 +260,13 @@ class _RegisterClassState extends State<AddSales> {
                               setState(() {
                                 _loading = true;
                               });
-                              AddSales();
+                              addSales();
 
                               // Navigator.of(context).push(
                             }
                           },
                     child: _loading
-                        ? SizedBox(
+                        ? const SizedBox(
                             height: 24,
                             width: 24,
                             child: CircularProgressIndicator(
@@ -217,10 +274,10 @@ class _RegisterClassState extends State<AddSales> {
                                 Color.fromARGB(255, 255, 255, 255),
                               ),
                             ))
-                        : Text(
+                        : const Text(
                             ' Add Sales',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 255, 255, 255),
+                              color: Colors.black,
                               fontSize: 14,
                               letterSpacing: 2,
                             ),
@@ -235,34 +292,127 @@ class _RegisterClassState extends State<AddSales> {
 
   User? user = FirebaseAuth.instance.currentUser;
 
-  AddSales() async {
+  // Your AddSales method with product update
+  Future<void> addSales() async {
     try {
-      await document.set({
-        'id': document.id,
-        "productName": productNametextEditingController.text.trim(),
-        "postedBy": user!.uid,
-        "price": priceEditingController.text.trim(),
-        "quantity": quantiyEditingController.text.trim(),
-        "PostedAt": FieldValue.serverTimestamp(),
-      });
-      setState(() {
-        _loading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('sales added Successfull'),
-        ),
-      );
+      final productQuery = await FirebaseFirestore.instance
+          .collection('products')
+          .where('code', isEqualTo: codeEditingController.text.trim())
+          .limit(1)
+          .get();
+      print("PRODUCT SEARCHHHHHHHHHHHHHHHH");
+
+      if (productQuery.docs.isNotEmpty) {
+        print("PRODUCT FOUNDDDDDDDDDDDDDDDDDDDDDDDDD");
+        final productDoc = productQuery.docs.first;
+        print("product is");
+        print(productDoc);
+        final productId = productDoc.id;
+        print(productId);
+        final productData = productDoc.data() as Map<String, dynamic>;
+        print("product data is");
+        print(productData);
+        final int availableQuantity = productData['quantity'] ?? 0;
+        final int soldQuantity =
+            int.parse(quantiyEditingController.text.trim());
+
+        print(soldQuantity);
+        print(availableQuantity);
+        // Check if there is enough quantity available for sale
+        if (soldQuantity <= availableQuantity) {
+          // Update product quantity
+          await FirebaseFirestore.instance
+              .collection('products')
+              .doc(productId)
+              .update({
+            'quantity': availableQuantity - soldQuantity,
+          });
+          final document = FirebaseFirestore.instance.collection('sales').doc();
+          // Add sale
+          await document.set({
+            'id': document.id,
+            "productName": productNametextEditingController.text.trim(),
+            "code": codeEditingController.text.trim(),
+            "postedBy": user!.uid,
+            "price": int.parse(priceEditingController.text.trim()),
+            "quantity": soldQuantity,
+            "PostedAt": FieldValue.serverTimestamp(),
+          });
+
+          setState(() {
+            _loading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sales added successfully'),
+            ),
+          );
+          Navigator.pop(context);
+        } else {
+          // Insufficient quantity available for sale
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Insufficient quantity available for sale.'),
+            ),
+          );
+          setState(() {
+            _loading = false;
+          });
+        }
+      } else {
+        print("PRODUCT NOT FOUNDDDDDDDDD");
+        // Product not found
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content:
+                Text('Product not found with that code. Unable to add sale.'),
+          ),
+        );
+        setState(() {
+          _loading = false;
+        });
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Unable to add product'),
+          content: Text('Unable to add sale'),
         ),
       );
+      setState(() {
+        _loading = false;
+      });
     }
 
-    // Navigator.pop(context);
-  }
+    // AddSales() async {
+    //   try {
+    //     await document.set({
+    //       'id': document.id,
+    //       "productName": productNametextEditingController.text.trim(),
+    //       "code": codeEditingController.text.trim(),
+    //       "postedBy": user!.uid,
+    //       "price": priceEditingController.text.trim(),
+    //       "quantity": quantiyEditingController.text.trim(),
+    //       "PostedAt": FieldValue.serverTimestamp(),
+    //     });
+    //     setState(() {
+    //       _loading = false;
+    //     });
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(
+    //         content: Text('sales added Successfull'),
+    //       ),
+    //     );
+    //   } catch (e) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(
+    //         content: Text('Unable to add product'),
+    //       ),
+    //     );
+    //   }
 
-  final document = FirebaseFirestore.instance.collection('sales').doc();
+    //   // Navigator.pop(context);
+    // }
+
+    // final document = FirebaseFirestore.instance.collection('sales').doc();
+  }
 }

@@ -13,7 +13,7 @@ class _EmployerHomepageState extends State<EmployerHomepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF009999),
+        backgroundColor: Color(0xFFf2dfce),
         iconTheme: IconThemeData(color: Colors.black),
         titleSpacing: 0,
         centerTitle: true,

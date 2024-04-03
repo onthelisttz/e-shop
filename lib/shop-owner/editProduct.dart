@@ -59,13 +59,18 @@ class _EditProductState extends State<EditProduct> {
           .doc(widget.docId)
           .get();
 
+      print("HEROOOOOOOOOOOOOOOOOOOOO");
+      print(widget.docId);
       Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+      print(data);
+      print(data['productName']);
+      print("product nName");
 
       _productNameController.text = data['productName'];
       _descriptionController.text = data['descripton'];
-      _buyingPriceController.text = data['buyingPrice'];
-      _sellingPriceController.text = data['sellingPrice'];
-      _quantityController.text = data['quantity'];
+      _buyingPriceController.text = data['buyingPrice'].toString();
+      _sellingPriceController.text = data['sellingPrice'].toString();
+      _quantityController.text = data['quantity'].toString();
       _measurementController.text = data['measuremnet'];
       _imageUrl = data['image']; // Initialize with current image URL
       setState(() {
@@ -83,10 +88,26 @@ class _EditProductState extends State<EditProduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Edit Product"),
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
+        titleSpacing: 0,
+        centerTitle: true,
+        elevation: 0,
+        title: Text("Edit Product",
+            style:
+                TextStyle(color: Colors.black.withOpacity(0.9), fontSize: 14)),
+        leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 18,
+              color: Color(0xFFe26f39),
+            )),
       ),
       body: _loading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Form(
               key: editProductKey,
               child: Padding(
@@ -95,9 +116,8 @@ class _EditProductState extends State<EditProduct> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 18, left: 18, right: 18),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 18, left: 18, right: 18),
                         child: Text(
                           'Product Name.',
                           style: TextStyle(
@@ -110,16 +130,19 @@ class _EditProductState extends State<EditProduct> {
                         padding:
                             const EdgeInsets.only(top: 1, left: 18, right: 18),
                         child: TextFormField(
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 1,
+                              color: Colors.black),
                           controller: _productNameController,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            fillColor: Color(0xFF009999),
+                            fillColor: const Color(0xFFf2dfce),
                             filled: true,
                             border: InputBorder.none,
                             suffixIcon: IconButton(
-                              color: Color.fromARGB(255, 177, 237, 237),
-                              icon: Icon(
+                              color: Color(0xFFe26f39),
+                              icon: const Icon(
                                 Icons.close,
                                 size: 16,
                               ),
@@ -127,15 +150,15 @@ class _EditProductState extends State<EditProduct> {
                                 _productNameController.clear();
                               },
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.title,
                               size: 16,
-                              color: Color.fromARGB(255, 177, 237, 237),
+                              color: Color(0xFFe26f39),
                             ),
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontSize: 11,
                                 letterSpacing: 1,
-                                color: Colors.white),
+                                color: Colors.black),
                             hintText: "Eg. Phone",
                           ),
                           validator: (String? value) {
@@ -145,9 +168,8 @@ class _EditProductState extends State<EditProduct> {
                           },
                         ),
                       ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 18, left: 18, right: 18),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 18, left: 18, right: 18),
                         child: Text(
                           'Buying Price.',
                           style: TextStyle(
@@ -160,16 +182,19 @@ class _EditProductState extends State<EditProduct> {
                         padding:
                             const EdgeInsets.only(top: 1, left: 18, right: 18),
                         child: TextFormField(
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 1,
+                              color: Colors.black),
                           controller: _buyingPriceController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            fillColor: Color(0xFF009999),
+                            fillColor: const Color(0xFFf2dfce),
                             filled: true,
                             border: InputBorder.none,
                             suffixIcon: IconButton(
-                              color: Color.fromARGB(255, 177, 237, 237),
-                              icon: Icon(
+                              color: Color(0xFFe26f39),
+                              icon: const Icon(
                                 Icons.close,
                                 size: 16,
                               ),
@@ -177,15 +202,15 @@ class _EditProductState extends State<EditProduct> {
                                 _buyingPriceController.clear();
                               },
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.price_change,
                               size: 16,
-                              color: Color.fromARGB(255, 177, 237, 237),
+                              color: Color(0xFFe26f39),
                             ),
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontSize: 11,
                                 letterSpacing: 1,
-                                color: Colors.white),
+                                color: Colors.black),
                             hintText: "Eg. 200000",
                           ),
                           validator: (String? value) {
@@ -195,9 +220,8 @@ class _EditProductState extends State<EditProduct> {
                           },
                         ),
                       ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 18, left: 18, right: 18),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 18, left: 18, right: 18),
                         child: Text(
                           'Selling Price.',
                           style: TextStyle(
@@ -210,16 +234,19 @@ class _EditProductState extends State<EditProduct> {
                         padding:
                             const EdgeInsets.only(top: 1, left: 18, right: 18),
                         child: TextFormField(
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 1,
+                              color: Colors.black),
                           controller: _sellingPriceController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            fillColor: Color(0xFF009999),
+                            fillColor: const Color(0xFFf2dfce),
                             filled: true,
                             border: InputBorder.none,
                             suffixIcon: IconButton(
-                              color: Color.fromARGB(255, 177, 237, 237),
-                              icon: Icon(
+                              color: Color(0xFFe26f39),
+                              icon: const Icon(
                                 Icons.close,
                                 size: 16,
                               ),
@@ -227,15 +254,15 @@ class _EditProductState extends State<EditProduct> {
                                 _sellingPriceController.clear();
                               },
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.price_change,
                               size: 16,
-                              color: Color.fromARGB(255, 177, 237, 237),
+                              color: Color(0xFFe26f39),
                             ),
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontSize: 11,
                                 letterSpacing: 1,
-                                color: Colors.white),
+                                color: Colors.black),
                             hintText: "Eg. 200000",
                           ),
                           validator: (String? value) {
@@ -245,9 +272,8 @@ class _EditProductState extends State<EditProduct> {
                           },
                         ),
                       ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 19, left: 18, right: 18),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 19, left: 18, right: 18),
                         child: Text(
                           'Quantity.',
                           style: TextStyle(
@@ -259,15 +285,18 @@ class _EditProductState extends State<EditProduct> {
                       Padding(
                         padding: const EdgeInsets.only(left: 18, right: 18),
                         child: TextFormField(
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 1,
+                              color: Colors.black),
                           controller: _quantityController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            fillColor: Color(0xFF009999),
+                            fillColor: const Color(0xFFf2dfce),
                             filled: true,
                             suffixIcon: IconButton(
-                              color: Color.fromARGB(255, 177, 237, 237),
-                              icon: Icon(
+                              color: Color(0xFFe26f39),
+                              icon: const Icon(
                                 Icons.close,
                                 size: 16,
                               ),
@@ -275,16 +304,16 @@ class _EditProductState extends State<EditProduct> {
                                 _quantityController.clear();
                               },
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.sanitizer_outlined,
                               size: 16,
-                              color: Color.fromARGB(255, 177, 237, 237),
+                              color: Color(0xFFe26f39),
                             ),
                             border: InputBorder.none,
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontSize: 11,
                                 letterSpacing: 1,
-                                color: Colors.white),
+                                color: Colors.black),
                             hintText: "Write a total size",
                           ),
                           validator: (String? value) {
@@ -294,9 +323,8 @@ class _EditProductState extends State<EditProduct> {
                           },
                         ),
                       ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 19, left: 18, right: 18),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 19, left: 18, right: 18),
                         child: Text(
                           'Measurement.',
                           style: TextStyle(
@@ -308,15 +336,18 @@ class _EditProductState extends State<EditProduct> {
                       Padding(
                         padding: const EdgeInsets.only(left: 18, right: 18),
                         child: TextFormField(
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 1,
+                              color: Colors.black),
                           controller: _measurementController,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            fillColor: Color(0xFF009999),
+                            fillColor: const Color(0xFFf2dfce),
                             filled: true,
                             suffixIcon: IconButton(
-                              color: Color.fromARGB(255, 177, 237, 237),
-                              icon: Icon(
+                              color: Color(0xFFe26f39),
+                              icon: const Icon(
                                 Icons.close,
                                 size: 16,
                               ),
@@ -324,16 +355,16 @@ class _EditProductState extends State<EditProduct> {
                                 _measurementController.clear();
                               },
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.kitchen_outlined,
                               size: 16,
-                              color: Color.fromARGB(255, 177, 237, 237),
+                              color: Color(0xFFe26f39),
                             ),
                             border: InputBorder.none,
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontSize: 11,
                                 letterSpacing: 1,
-                                color: Colors.white),
+                                color: Colors.black),
                             hintText: "Measurement of the product",
                           ),
                           validator: (String? value) {
@@ -343,9 +374,8 @@ class _EditProductState extends State<EditProduct> {
                           },
                         ),
                       ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(top: 19, left: 18, right: 18),
+                      const Padding(
+                        padding: EdgeInsets.only(top: 19, left: 18, right: 18),
                         child: Text(
                           'Description.',
                           style: TextStyle(
@@ -357,15 +387,18 @@ class _EditProductState extends State<EditProduct> {
                       Padding(
                         padding: const EdgeInsets.only(left: 18, right: 18),
                         child: TextFormField(
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                              fontSize: 14,
+                              letterSpacing: 1,
+                              color: Colors.black),
                           controller: _descriptionController,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            fillColor: Color(0xFF009999),
+                            fillColor: const Color(0xFFf2dfce),
                             filled: true,
                             suffixIcon: IconButton(
-                              color: Color.fromARGB(255, 177, 237, 237),
-                              icon: Icon(
+                              color: Color(0xFFe26f39),
+                              icon: const Icon(
                                 Icons.close,
                                 size: 16,
                               ),
@@ -373,16 +406,16 @@ class _EditProductState extends State<EditProduct> {
                                 _descriptionController.clear();
                               },
                             ),
-                            prefixIcon: Icon(
+                            prefixIcon: const Icon(
                               Icons.description,
                               size: 16,
-                              color: Color.fromARGB(255, 177, 237, 237),
+                              color: Color(0xFFe26f39),
                             ),
                             border: InputBorder.none,
-                            hintStyle: TextStyle(
+                            hintStyle: const TextStyle(
                                 fontSize: 11,
                                 letterSpacing: 1,
-                                color: Colors.white),
+                                color: Colors.black),
                             hintText:
                                 "Write a short description of the product",
                           ),
@@ -393,8 +426,8 @@ class _EditProductState extends State<EditProduct> {
                           },
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      const Padding(
+                        padding: EdgeInsets.all(8.0),
                         child: Text(
                           'product Image',
                           style: TextStyle(
@@ -417,13 +450,13 @@ class _EditProductState extends State<EditProduct> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(15),
                                     shape: BoxShape.rectangle,
-                                    color: Color(0xFF009999),
+                                    color: const Color(0xFFf2dfce),
                                   ),
                                   child: Container(
                                     child: _image == null
                                         ? _imageUrl.isNotEmpty
                                             ? Container(
-                                                margin: EdgeInsets.all(3),
+                                                margin: const EdgeInsets.all(3),
                                                 decoration: BoxDecoration(
                                                   image: DecorationImage(
                                                     image:
@@ -434,7 +467,7 @@ class _EditProductState extends State<EditProduct> {
                                               )
                                             : Container()
                                         : Container(
-                                            margin: EdgeInsets.all(3),
+                                            margin: const EdgeInsets.all(3),
                                             decoration: BoxDecoration(
                                               image: DecorationImage(
                                                 image: FileImage(_image!),
@@ -456,15 +489,14 @@ class _EditProductState extends State<EditProduct> {
                                 child: ClipOval(
                                   child: Container(
                                     color: Colors.white,
-                                    padding: EdgeInsets.all(3.0),
+                                    padding: const EdgeInsets.all(3.0),
                                     child: ClipOval(
                                       child: Container(
-                                        padding: EdgeInsets.all(8.0),
-                                        color:
-                                            Color.fromARGB(255, 177, 237, 237),
-                                        child: Icon(
+                                        padding: const EdgeInsets.all(8.0),
+                                        color: const Color(0xFFf2dfce),
+                                        child: const Icon(
                                           Icons.add_a_photo,
-                                          color: Color(0xFF009999),
+                                          color: Color(0xFFe26f39),
                                           size: 20,
                                         ),
                                       ),
@@ -476,7 +508,7 @@ class _EditProductState extends State<EditProduct> {
                           ],
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Padding(
@@ -484,10 +516,11 @@ class _EditProductState extends State<EditProduct> {
                         child: OutlinedButton(
                             style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(
-                                  const Color(0xFF009999),
+                                  const Color(0xFFf2dfce),
                                 ),
-                                side: MaterialStateProperty.all(BorderSide(
-                                  color: Color.fromARGB(255, 177, 237, 237),
+                                side:
+                                    MaterialStateProperty.all(const BorderSide(
+                                  color: Color(0xFFe26f39),
                                 )),
                                 shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
@@ -508,18 +541,18 @@ class _EditProductState extends State<EditProduct> {
                                     }
                                   },
                             child: _loading
-                                ? SizedBox(
+                                ? const SizedBox(
                                     height: 24,
                                     width: 24,
                                     child: CircularProgressIndicator(
                                       valueColor: AlwaysStoppedAnimation(
-                                        Color.fromARGB(255, 255, 255, 255),
+                                        Color(0xFFe26f39),
                                       ),
                                     ))
-                                : Text(
+                                : const Text(
                                     ' Update Product',
                                     style: TextStyle(
-                                      color: Color.fromARGB(255, 255, 255, 255),
+                                      color: Colors.black,
                                       fontSize: 14,
                                       letterSpacing: 2,
                                     ),
@@ -576,15 +609,18 @@ class _EditProductState extends State<EditProduct> {
         imageUrl = await ref.getDownloadURL();
       }
 
+      var buyingPrice = int.parse(_buyingPriceController.text.trim());
+      var sellingPrice = int.parse(_sellingPriceController.text.trim());
+      var qntity = int.parse(_quantityController.text.trim());
       await FirebaseFirestore.instance
           .collection('products')
           .doc(widget.docId)
           .update({
         'productName': _productNameController.text,
         'descripton': _descriptionController.text,
-        'buyingPrice': _buyingPriceController.text,
-        'sellingPrice': _sellingPriceController.text,
-        'quantity': _quantityController.text,
+        "buyingPrice": buyingPrice,
+        "sellingPrice": sellingPrice,
+        "quantity": qntity,
         'measuremnet': _measurementController.text,
         'image': imageUrl,
       });
@@ -594,7 +630,7 @@ class _EditProductState extends State<EditProduct> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Product updated successfully')),
+        const SnackBar(content: Text('Product updated successfully')),
       );
       Navigator.pop(context);
     } catch (e) {
@@ -602,7 +638,7 @@ class _EditProductState extends State<EditProduct> {
         _loading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to update product')),
+        const SnackBar(content: Text('Failed to update product')),
       );
     }
   }

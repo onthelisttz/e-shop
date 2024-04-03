@@ -2,8 +2,11 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_shop/AllWigtes/Dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AppColors {
   static const Color primary = contentColorCyan;
@@ -29,8 +32,8 @@ class AppColors {
   static const Color contentColorCyan = Color(0xFF50E4FF);
 }
 
-class BarChartSample1 extends StatefulWidget {
-  BarChartSample1({super.key});
+class ShopPregress extends StatefulWidget {
+  ShopPregress({super.key});
 
   List<Color> get availableColors => const <Color>[
         AppColors.contentColorPurple,
@@ -46,12 +49,18 @@ class BarChartSample1 extends StatefulWidget {
   final Color touchedBarColor = AppColors.contentColorGreen;
 
   @override
-  State<StatefulWidget> createState() => BarChartSample1State();
+  State<StatefulWidget> createState() => ShopPregressState();
 }
 
-class BarChartSample1State extends State<BarChartSample1> {
-  final Stream<QuerySnapshot> _chatsStream =
-      FirebaseFirestore.instance.collection('sales').snapshots();
+User? user = FirebaseAuth.instance.currentUser;
+
+class ShopPregressState extends State<ShopPregress> {
+  final _format = NumberFormat('##,###,###.##');
+
+  final Stream<QuerySnapshot> _chatsStream = FirebaseFirestore.instance
+      .collection('sales')
+      .where("postedBy", isEqualTo: user!.uid)
+      .snapshots();
 
   final Duration animDuration = const Duration(milliseconds: 250);
 
@@ -62,263 +71,247 @@ class BarChartSample1State extends State<BarChartSample1> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        color: Colors.red,
-        child: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Shop progress',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black.withOpacity(0.9)),
-              ),
-            ),
-            const SizedBox(
-              height: 4,
-            ),
-            const SizedBox(
-              height: 38,
-            ),
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _chatsStream,
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return Text('Something went wrong');
-                  }
+    return Container(
+      // color: Colors.black,
+      decoration: const BoxDecoration(
+          boxShadow: <BoxShadow>[
+            BoxShadow(
+                color: Color(0xFFe26f39), blurRadius: 1, spreadRadius: 0.1)
+          ],
+          // color: Color(0xFF232323),
+          color: Colors.black,
+          borderRadius: BorderRadius.all(
+            Radius.circular(10.0),
+          )),
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text("Loading");
-                  }
+      child: Expanded(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _chatsStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Something went wrong');
+            }
 
-                  // Clear previous sales data
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
 
-                  salesData.clear();
+            // Initialize a list to hold your dynamic bar groups
+            List<BarChartGroupData> barGroups = [];
 
-                  // Extract sales data and aggregate it
-                  snapshot.data!.docs.forEach((DocumentSnapshot document) {
-                    Map<String, dynamic> data =
-                        document.data()! as Map<String, dynamic>;
-                    double price = double.parse(data["price"]);
-                    salesData.add(price);
-                  });
+            // Function to generate a single group data
+// Function to generate a single group data
+            BarChartGroupData makeGroupData(
+              int x,
+              double y, {
+              bool isTouched = false,
+              Color? barColor,
+              double width = 22,
+              List<int> showTooltips = const [],
+            }) {
+              barColor ??= widget.barColor;
+              return BarChartGroupData(
+                x: x,
+                barRods: [
+                  BarChartRodData(
+                    toY: isTouched ? y + 4 : y,
+                    color: isTouched
+                        ? const Color.fromARGB(255, 74, 93, 103)
+                        : widget.barColor,
+                    width: width,
+                    borderSide: isTouched
+                        ? BorderSide(color: widget.touchedBarColor)
+                        : const BorderSide(color: Colors.white, width: 0),
+                    backDrawRodData: BackgroundBarChartRodData(
+                      show: true,
+                      toY: 20,
+                      color: widget.barBackgroundColor,
+                    ),
+                  ),
+                ],
+                showingTooltipIndicators: showTooltips,
+              );
+            }
 
-                  // Create the LineChart once with aggregated sales data
-                  return Container(
-                    height: 300,
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        right: 2,
-                      ),
-                      child: Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: BarChart(
-                            mainBarData(),
-                            swapAnimationDuration: animDuration,
+            // Extract sales data and aggregate it
+            List<double> salesData = [];
+            List<String> productDate = [];
+
+            Map<String, double> sumByDate = {};
+
+            snapshot.data!.docs.forEach((DocumentSnapshot document) {
+              Map<String, dynamic> data =
+                  document.data()! as Map<String, dynamic>;
+              double price = double.parse(data["price"].toString());
+
+              // Extract the date part from the Firestore timestamp
+              // DateTime postedAt = (data['PostedAt'] as Timestamp).toDate();
+
+              DateTime postedAt;
+              if (data['PostedAt'] != null) {
+                postedAt = (data['PostedAt'] as Timestamp).toDate();
+              } else {
+                Timestamp defaultTimestamp =
+                    Timestamp.fromDate(DateTime(1998, 1, 2));
+                postedAt = defaultTimestamp.toDate();
+              }
+
+              String postedDate =
+                  "${postedAt.year}-${postedAt.month}-${postedAt.day}";
+
+              // Add the price to the sum for the corresponding date
+              if (sumByDate.containsKey(postedDate)) {
+                sumByDate[postedDate] = sumByDate[postedDate]! + price;
+              } else {
+                sumByDate[postedDate] = price;
+              }
+            });
+
+// Now, sumByDate contains the sum of prices for each posted date
+
+// Push the sums and dates to productDate
+            sumByDate.forEach((date, sum) {
+              print(sum);
+              print(date);
+              // DateFormat dateFormat = DateFormat('dd, MMMM');
+              var format = DateFormat('d, MMM');
+              // DateTime dateTime = DateTime.parse(date);
+
+              List<String> dateParts = date.split('-');
+
+// Extract year, month, and day from the split parts
+              int year = int.parse(dateParts[0]);
+              int month = int.parse(dateParts[1]);
+              int day = int.parse(dateParts[2]);
+
+// Create a DateTime object with the extracted components
+              DateTime dateTime = DateTime(year, month, day);
+              salesData.add(sum);
+              productDate.add(format.format(dateTime));
+
+              // productDate.add({'date': date, 'sum': sum});
+            });
+
+            // Generate bar groups dynamically based on sales data
+            for (int i = 0; i < salesData.length; i++) {
+              double price = salesData[i];
+              barGroups
+                  .add(makeGroupData(i, price, isTouched: i == touchedIndex));
+            }
+
+            // Create the BarChart with dynamic bar groups
+            return Container(
+              height: 300,
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  right: 2,
+                ),
+                child: Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: BarChart(
+                      BarChartData(
+                        barTouchData: BarTouchData(
+                            touchTooltipData: BarTouchTooltipData(
+                              tooltipBgColor: Colors.blueGrey,
+                              tooltipHorizontalAlignment:
+                                  FLHorizontalAlignment.right,
+                              tooltipMargin: -10,
+                              getTooltipItem:
+                                  (group, groupIndex, rod, rodIndex) {
+                                String productName = "";
+
+                                // Assuming you have a list of product names named productDate
+                                if (groupIndex >= 0 &&
+                                    groupIndex < productDate.length) {
+                                  productName = productDate[groupIndex];
+                                }
+
+                                double price = rod.toY;
+
+                                return BarTooltipItem(
+                                  'Date $productName\nPrice: ${_format.format(price)}', // Adjust as per your data
+                                  const TextStyle(
+                                    color: Colors.white,
+                                    letterSpacing: 1,
+                                    // backgroundColor: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 11,
+                                  ),
+                                );
+                              },
+                            ),
+                            touchCallback:
+                                (FlTouchEvent event, barTouchResponse) {
+                              setState(() {
+                                if (!event.isInterestedForInteractions ||
+                                    barTouchResponse == null ||
+                                    barTouchResponse.spot == null) {
+                                  touchedIndex = -1;
+                                  return;
+                                }
+                                touchedIndex =
+                                    barTouchResponse.spot!.touchedBarGroupIndex;
+                              });
+                            }),
+
+                        titlesData: FlTitlesData(
+                          show: true,
+                          rightTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          topTitles: const AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              getTitlesWidget: (double value, TitleMeta meta) {
+                                const style = TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                );
+
+                                Widget text;
+                                if (value.toInt() >= 0 &&
+                                    value.toInt() < productDate.length) {
+                                  print(
+                                      productDate[value.toInt()].substring(2));
+                                  text = Text(productDate[value.toInt()],
+                                      style: style);
+                                } else {
+                                  text = const Text('', style: style);
+                                }
+
+                                return SideTitleWidget(
+                                  axisSide: meta.axisSide,
+                                  space: 16,
+                                  child: text,
+                                );
+                              },
+                              reservedSize: 38,
+                            ),
+                          ),
+                          leftTitles: const AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: false,
+                            ),
                           ),
                         ),
+
+                        // Other chart configurations...
+                        barGroups: barGroups,
                       ),
                     ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  BarChartGroupData makeGroupData(
-    int x,
-    double y, {
-    bool isTouched = false,
-    Color? barColor,
-    double width = 22,
-    List<int> showTooltips = const [],
-  }) {
-    barColor ??= widget.barColor;
-    return BarChartGroupData(
-      x: x,
-      barRods: [
-        BarChartRodData(
-          toY: isTouched ? y + 1 : y,
-          color: isTouched ? widget.touchedBarColor : barColor,
-          width: width,
-          borderSide: isTouched
-              ? BorderSide(color: widget.touchedBarColor)
-              : const BorderSide(color: Colors.white, width: 0),
-          backDrawRodData: BackgroundBarChartRodData(
-            show: true,
-            toY: 20,
-            color: widget.barBackgroundColor,
-          ),
-        ),
-      ],
-      showingTooltipIndicators: showTooltips,
-    );
-  }
-
-  List<BarChartGroupData> showingGroups() => List.generate(7, (i) {
-        switch (i) {
-          case 0:
-            return makeGroupData(0, 5, isTouched: i == touchedIndex);
-          case 1:
-            return makeGroupData(1, 6.5, isTouched: i == touchedIndex);
-          case 2:
-            return makeGroupData(2, 5, isTouched: i == touchedIndex);
-          case 3:
-            return makeGroupData(3, 7.5, isTouched: i == touchedIndex);
-          case 4:
-            return makeGroupData(4, 9, isTouched: i == touchedIndex);
-          case 5:
-            return makeGroupData(5, 11.5, isTouched: i == touchedIndex);
-          case 6:
-            return makeGroupData(6, 6.5, isTouched: i == touchedIndex);
-          default:
-            return throw Error();
-        }
-      });
-
-  BarChartData mainBarData() {
-    return BarChartData(
-      barTouchData: BarTouchData(
-        touchTooltipData: BarTouchTooltipData(
-          tooltipBgColor: Colors.blueGrey,
-          tooltipHorizontalAlignment: FLHorizontalAlignment.right,
-          tooltipMargin: -10,
-          getTooltipItem: (group, groupIndex, rod, rodIndex) {
-            String weekDay;
-            switch (group.x) {
-              case 0:
-                weekDay = 'Monday';
-                break;
-              case 1:
-                weekDay = 'Tuesday';
-                break;
-              case 2:
-                weekDay = 'Wednesday';
-                break;
-              case 3:
-                weekDay = 'Thursday';
-                break;
-              case 4:
-                weekDay = 'Friday';
-                break;
-              case 5:
-                weekDay = 'Saturday';
-                break;
-              case 6:
-                weekDay = 'Sunday';
-                break;
-              default:
-                throw Error();
-            }
-            return BarTooltipItem(
-              '$weekDay\n',
-              const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-              children: <TextSpan>[
-                TextSpan(
-                  text: (rod.toY - 1).toString(),
-                  style: TextStyle(
-                    color: widget.touchedBarColor,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
                   ),
                 ),
-              ],
+              ),
             );
           },
         ),
-        touchCallback: (FlTouchEvent event, barTouchResponse) {
-          setState(() {
-            if (!event.isInterestedForInteractions ||
-                barTouchResponse == null ||
-                barTouchResponse.spot == null) {
-              touchedIndex = -1;
-              return;
-            }
-            touchedIndex = barTouchResponse.spot!.touchedBarGroupIndex;
-          });
-        },
       ),
-      titlesData: FlTitlesData(
-        show: true,
-        rightTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        topTitles: const AxisTitles(
-          sideTitles: SideTitles(showTitles: false),
-        ),
-        bottomTitles: AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: true,
-            getTitlesWidget: getTitles,
-            reservedSize: 38,
-          ),
-        ),
-        leftTitles: const AxisTitles(
-          sideTitles: SideTitles(
-            showTitles: false,
-          ),
-        ),
-      ),
-      borderData: FlBorderData(
-        show: false,
-      ),
-      barGroups: showingGroups(),
-      gridData: const FlGridData(show: false),
-    );
-  }
-
-  Widget getTitles(double value, TitleMeta meta) {
-    const style = TextStyle(
-      color: Colors.white,
-      fontWeight: FontWeight.bold,
-      fontSize: 14,
-    );
-    Widget text;
-    switch (value.toInt()) {
-      case 0:
-        text = const Text('M', style: style);
-        break;
-      case 1:
-        text = const Text('T', style: style);
-        break;
-      case 2:
-        text = const Text('W', style: style);
-        break;
-      case 3:
-        text = const Text('T', style: style);
-        break;
-      case 4:
-        text = const Text('F', style: style);
-        break;
-      case 5:
-        text = const Text('S', style: style);
-        break;
-      case 6:
-        text = const Text('S', style: style);
-        break;
-      default:
-        text = const Text('', style: style);
-        break;
-    }
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 16,
-      child: text,
     );
   }
 }

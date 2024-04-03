@@ -36,13 +36,16 @@ class _LoginClassState extends State<LoginClass> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF009999),
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: Colors.black),
         titleSpacing: 0,
         centerTitle: true,
         title: Padding(
           padding: const EdgeInsets.only(left: 8),
-          child: Text('Login', style: TextStyle(color: Colors.white)),
+          child: Text('Login',
+              style: TextStyle(
+                  color: Colors.black.withOpacity(0.9), fontSize: 14)),
         ),
         elevation: 0,
       ),
@@ -54,35 +57,30 @@ class _LoginClassState extends State<LoginClass> {
             children: [
               // Image(image: AssetImage('assets/heavy.jpg')),
               Image(image: AssetImage('images/shop2.png')),
+
               Padding(
-                padding: const EdgeInsets.only(top: 19, left: 18, right: 18),
+                padding: const EdgeInsets.only(top: 8, left: 18, right: 18),
                 child: Text(
-                  'Name.',
+                  'Email Address.',
                   style: TextStyle(
-                    fontSize: 14,
-                    letterSpacing: 1,
-                    color: Colors.white,
-                  ),
+                      fontSize: 14, letterSpacing: 1, color: Color(0xFF3D3D3D)),
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 18, right: 18),
                 child: TextFormField(
-                  style: TextStyle(color: Colors.white),
                   controller: emailtextEditingController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
-                    fillColor: Color(0xFF009999),
-
+                    fillColor: Color(0xFFf2dfce),
                     filled: true,
                     prefixIcon: Icon(
                       Icons.email,
+                      color: Color(0xFFe26f39),
                       size: 16,
-                      color: Color.fromARGB(255, 177, 237, 237),
                     ),
-
                     suffixIcon: IconButton(
-                      color: Color.fromARGB(255, 177, 237, 237),
+                      color: Color(0xFFe26f39),
                       icon: Icon(
                         Icons.close,
                         size: 16,
@@ -91,26 +89,16 @@ class _LoginClassState extends State<LoginClass> {
                         emailtextEditingController.clear();
                       },
                     ),
-                    // prefixIconConstraints: BoxConstraints(
-                    //   maxHeight: 10,
-                    //   maxWidth: 20,
-                    // ),
-                    // prefixIcon: Icon(
-                    //   Icons.email,
-                    //   size: 16,
-                    //   color: Color.fromARGB(255, 177, 237, 237),
-                    // ),
                     border: InputBorder.none,
                     hintStyle: TextStyle(
-                      fontSize: 11,
-                      letterSpacing: 1,
-                      color: Colors.white,
-                    ),
+                        fontSize: 11,
+                        letterSpacing: 1,
+                        color: Color(0xFF3D3D3D)),
                     hintText: "E.g johnDoe@gmail.com",
                   ),
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'email is reqired';
+                      return 'Email is required';
                     }
 
                     if (!RegExp(
@@ -121,32 +109,29 @@ class _LoginClassState extends State<LoginClass> {
                   },
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.only(top: 19, left: 18, right: 18),
                 child: Text(
                   'Enter a Password.',
                   style: TextStyle(
-                    fontSize: 14,
-                    letterSpacing: 1,
-                    color: Colors.white,
-                  ),
+                      fontSize: 14, letterSpacing: 1, color: Color(0xFF3D3D3D)),
                 ),
               ),
-
               Padding(
                 padding: const EdgeInsets.only(left: 18, right: 18),
                 child: TextFormField(
-                  style: TextStyle(color: Colors.white),
                   controller: passwordtextEditingController,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   obscureText: isPasswordVisibleOne,
-                  // keyboardType: TextInputType.visiblePassword,
                   decoration: InputDecoration(
-                    fillColor: Color(0xFF009999),
+                    fillColor: Color(0xFFf2dfce),
                     filled: true,
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Color(0xFFe26f39),
+                      size: 16,
+                    ),
                     suffixIcon: IconButton(
-                      color: Color.fromARGB(255, 177, 237, 237),
+                      color: Color(0xFFe26f39),
                       icon: isPasswordVisibleOne
                           ? Icon(
                               Icons.visibility_off,
@@ -162,46 +147,34 @@ class _LoginClassState extends State<LoginClass> {
                         });
                       },
                     ),
-
-                    // prefixIcon: Icon(
-                    //   Icons.lock,
-                    //   size: 16,
-                    //   color: Color.fromARGB(255, 177, 237, 237),
-                    // ),
-                    prefixIcon: Icon(
-                      Icons.lock,
-                      size: 16,
-                      color: Color.fromARGB(255, 177, 237, 237),
-                    ),
                     border: InputBorder.none,
                     hintStyle: TextStyle(
-                      fontSize: 11,
-                      letterSpacing: 1,
-                      color: Colors.white,
-                    ),
-                    hintText: "****",
+                        fontSize: 11,
+                        letterSpacing: 1,
+                        color: Color(0xFF3D3D3D)),
+                    hintText: "*******",
                   ),
                   validator: (String? value) {
                     if (value!.isEmpty) {
-                      return 'password is required';
+                      return 'Password is required';
+                    } else if (value.length < 7 || value.length > 20) {
+                      return "Password must be between 7 and 20 characters";
                     }
                   },
                 ),
               ),
-
               SizedBox(
                 height: 5,
               ),
-
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: OutlinedButton(
                     style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(
-                          const Color(0xFF009999),
+                          const Color(0xFFf2dfce),
                         ),
                         side: MaterialStateProperty.all(BorderSide(
-                          color: Color(0xFF009999),
+                          color: Color(0xFFe26f39),
                         )),
                         shape:
                             MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -224,13 +197,13 @@ class _LoginClassState extends State<LoginClass> {
                             width: 24,
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation(
-                                Colors.white,
+                                Color(0xFFe26f39),
                               ),
                             ))
                         : Text(
                             ' login',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: Color(0xFFe26f39),
                               fontSize: 14,
                               letterSpacing: 2,
                             ),

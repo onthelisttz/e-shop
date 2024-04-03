@@ -31,12 +31,12 @@ const List<String> list = <String>[
   'lawyer',
 ];
 
-class RegisterClass extends StatefulWidget {
-  const RegisterClass({Key? key}) : super(key: key);
-  static const String idScreen = "register";
+class RegisterEmployerClass extends StatefulWidget {
+  const RegisterEmployerClass({Key? key}) : super(key: key);
+  static const String idScreen = "registerEmployer";
 
   @override
-  _RegisterClassState createState() => _RegisterClassState();
+  _RegisterClassEmployerState createState() => _RegisterClassEmployerState();
 }
 
 TextEditingController nametextEditingController = TextEditingController();
@@ -51,7 +51,7 @@ TextEditingController _confirmPasswordController = TextEditingController();
 bool isPasswordVisibleOne = true;
 bool isPasswordVisible = true;
 
-class _RegisterClassState extends State<RegisterClass> {
+class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
   final GlobalKey<FormState> reigsterUser = GlobalKey<FormState>();
 
   String dropdownValue = list.first;
@@ -163,7 +163,7 @@ class _RegisterClassState extends State<RegisterClass> {
               Padding(
                 padding: const EdgeInsets.only(top: 1, left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.white),
                   controller: nametextEditingController,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
@@ -186,7 +186,7 @@ class _RegisterClassState extends State<RegisterClass> {
                       color: Color(0xFFe26f39),
                     ),
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.black),
+                        fontSize: 11, letterSpacing: 1, color: Colors.white),
                     hintText: "E.g john Doe",
                   ),
                   validator: (String? value) {
@@ -207,7 +207,7 @@ class _RegisterClassState extends State<RegisterClass> {
               Padding(
                 padding: const EdgeInsets.only(left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.white),
                   controller: emailtextEditingController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
@@ -230,7 +230,7 @@ class _RegisterClassState extends State<RegisterClass> {
                     ),
                     border: InputBorder.none,
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.black),
+                        fontSize: 11, letterSpacing: 1, color: Colors.white),
                     hintText: "E.g johnDoe@gmail.com",
                   ),
                   validator: (String? value) {
@@ -269,7 +269,7 @@ class _RegisterClassState extends State<RegisterClass> {
                         )),
                     child: Center(
                       child: TextFormField(
-                        style: const TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.white),
                         controller: locationtextEditingController,
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
@@ -316,7 +316,7 @@ class _RegisterClassState extends State<RegisterClass> {
               Padding(
                 padding: const EdgeInsets.only(top: 1, left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.white),
                   controller: PhoneNumbertextEditingController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
@@ -339,7 +339,7 @@ class _RegisterClassState extends State<RegisterClass> {
                       color: Color(0xFFe26f39),
                     ),
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.black),
+                        fontSize: 11, letterSpacing: 1, color: Colors.white),
                     hintText: "Phone number",
                   ),
                   validator: (String? value) {
@@ -360,7 +360,7 @@ class _RegisterClassState extends State<RegisterClass> {
               Padding(
                 padding: const EdgeInsets.only(top: 1, left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.white),
                   controller: shopNametextEditingController,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
@@ -383,7 +383,7 @@ class _RegisterClassState extends State<RegisterClass> {
                       color: Color(0xFFe26f39),
                     ),
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.black),
+                        fontSize: 11, letterSpacing: 1, color: Colors.white),
                     hintText: "Shop Name",
                   ),
                   validator: (String? value) {
@@ -404,7 +404,7 @@ class _RegisterClassState extends State<RegisterClass> {
               Padding(
                 padding: const EdgeInsets.only(left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.white),
                   controller: passwordtextEditingController,
                   obscureText: isPasswordVisibleOne,
                   decoration: InputDecoration(
@@ -434,7 +434,7 @@ class _RegisterClassState extends State<RegisterClass> {
                     ),
                     border: InputBorder.none,
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.black),
+                        fontSize: 11, letterSpacing: 1, color: Colors.white),
                     hintText: "*******",
                   ),
                   validator: (String? value) {
@@ -455,7 +455,7 @@ class _RegisterClassState extends State<RegisterClass> {
               Padding(
                 padding: const EdgeInsets.only(left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: Colors.white),
                   controller: _confirmPasswordController,
                   obscureText: isPasswordVisible,
                   decoration: InputDecoration(
@@ -485,7 +485,7 @@ class _RegisterClassState extends State<RegisterClass> {
                     ),
                     border: InputBorder.none,
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.black),
+                        fontSize: 11, letterSpacing: 1, color: Colors.white),
                     hintText: "*******",
                   ),
                   validator: (String? value) {
@@ -636,11 +636,6 @@ class _RegisterClassState extends State<RegisterClass> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   registerNewUser(BuildContext context) async {
     try {
-      if (_image == null) {
-        displayToastMessage("Image is required", context);
-        return;
-      }
-
       final firebaseUser =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailtextEditingController.text,
@@ -680,7 +675,6 @@ class _RegisterClassState extends State<RegisterClass> {
       await firebaseUser.user!
           .verifyBeforeUpdateEmail(emailtextEditingController.text.trim());
 
-      await FirebaseAuth.instance.signOut();
       _loading = false;
       Navigator.pushReplacementNamed(
         context,

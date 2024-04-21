@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:e_shop/shop-owner/employerList.dart';
 import 'package:e_shop/shop-owner/shopProgressChart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -164,6 +165,23 @@ class _DashbordState extends State<Dashbord> {
                   color: Colors.black.withOpacity(0.9), fontSize: 14)),
         ),
         elevation: 0,
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'employerList',
+        onPressed: () {
+          // Add your onPressed action here
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (BuildContext context) {
+            return EmployerList();
+          }));
+        },
+        backgroundColor: const Color(0xFFf2dfce), // Background color
+        foregroundColor: const Color(0xFFe26f39), // Icon color
+        shape: RoundedRectangleBorder(
+          side: const BorderSide(color: Color(0xFFe26f39)), // Border color
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: const Icon(Icons.people),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

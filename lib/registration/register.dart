@@ -662,6 +662,7 @@ class _RegisterClassState extends State<RegisterClass> {
         "id": firebaseUser.user!.uid,
         "displayName": nametextEditingController.text.trim(),
         "email": emailtextEditingController.text.trim(),
+        "createdBy": firebaseUser.user!.uid,
         "phoneNo": PhoneNumbertextEditingController.text.trim(),
         "location": locationtextEditingController.text.trim(),
         "shopName": shopNametextEditingController.text.trim(),

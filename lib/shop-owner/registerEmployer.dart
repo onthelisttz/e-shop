@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:e_shop/AllWigtes/Dialog.dart';
 import 'package:e_shop/registration/login.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -36,22 +38,20 @@ class RegisterEmployerClass extends StatefulWidget {
   static const String idScreen = "registerEmployer";
 
   @override
-  _RegisterClassEmployerState createState() => _RegisterClassEmployerState();
+  _RegisterEmployerClassState createState() => _RegisterEmployerClassState();
 }
 
 TextEditingController nametextEditingController = TextEditingController();
 TextEditingController emailtextEditingController = TextEditingController();
 TextEditingController locationtextEditingController = TextEditingController();
-TextEditingController shopNametextEditingController = TextEditingController();
+
 TextEditingController PhoneNumbertextEditingController =
     TextEditingController();
-TextEditingController passwordtextEditingController = TextEditingController();
-TextEditingController _confirmPasswordController = TextEditingController();
 
 bool isPasswordVisibleOne = true;
 bool isPasswordVisible = true;
 
-class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
+class _RegisterEmployerClassState extends State<RegisterEmployerClass> {
   final GlobalKey<FormState> reigsterUser = GlobalKey<FormState>();
 
   String dropdownValue = list.first;
@@ -163,7 +163,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
               Padding(
                 padding: const EdgeInsets.only(top: 1, left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.black),
                   controller: nametextEditingController,
                   keyboardType: TextInputType.text,
                   decoration: InputDecoration(
@@ -186,7 +186,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
                       color: Color(0xFFe26f39),
                     ),
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
+                        fontSize: 11, letterSpacing: 1, color: Colors.black),
                     hintText: "E.g john Doe",
                   ),
                   validator: (String? value) {
@@ -207,7 +207,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
               Padding(
                 padding: const EdgeInsets.only(left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.black),
                   controller: emailtextEditingController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
@@ -230,7 +230,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
                     ),
                     border: InputBorder.none,
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
+                        fontSize: 11, letterSpacing: 1, color: Colors.black),
                     hintText: "E.g johnDoe@gmail.com",
                   ),
                   validator: (String? value) {
@@ -269,7 +269,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
                         )),
                     child: Center(
                       child: TextFormField(
-                        style: const TextStyle(color: Colors.white),
+                        style: const TextStyle(color: Colors.black),
                         controller: locationtextEditingController,
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
@@ -316,7 +316,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
               Padding(
                 padding: const EdgeInsets.only(top: 1, left: 18, right: 18),
                 child: TextFormField(
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.black),
                   controller: PhoneNumbertextEditingController,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
@@ -339,7 +339,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
                       color: Color(0xFFe26f39),
                     ),
                     hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
+                        fontSize: 11, letterSpacing: 1, color: Colors.black),
                     hintText: "Phone number",
                   ),
                   validator: (String? value) {
@@ -349,160 +349,12 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
                   },
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.only(top: 19, left: 18, right: 18),
-                child: Text(
-                  'Shop Name.',
-                  style: TextStyle(
-                      fontSize: 14, letterSpacing: 1, color: Colors.black),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 1, left: 18, right: 18),
-                child: TextFormField(
-                  style: const TextStyle(color: Colors.white),
-                  controller: shopNametextEditingController,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    fillColor: const Color(0xFFf2dfce),
-                    filled: true,
-                    border: InputBorder.none,
-                    suffixIcon: IconButton(
-                      color: const Color(0xFFe26f39),
-                      icon: const Icon(
-                        Icons.close,
-                        size: 16,
-                      ),
-                      onPressed: () {
-                        shopNametextEditingController.clear();
-                      },
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.person,
-                      size: 16,
-                      color: Color(0xFFe26f39),
-                    ),
-                    hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
-                    hintText: "Shop Name",
-                  ),
-                  validator: (String? value) {
-                    if (value!.isEmpty) {
-                      return "shop name is requred";
-                    }
-                  },
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 19, left: 18, right: 18),
-                child: Text(
-                  'Enter a Password.',
-                  style: TextStyle(
-                      fontSize: 14, letterSpacing: 1, color: Colors.black),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 18, right: 18),
-                child: TextFormField(
-                  style: const TextStyle(color: Colors.white),
-                  controller: passwordtextEditingController,
-                  obscureText: isPasswordVisibleOne,
-                  decoration: InputDecoration(
-                    fillColor: const Color(0xFFf2dfce),
-                    filled: true,
-                    suffixIcon: IconButton(
-                      color: const Color(0xFFe26f39),
-                      icon: isPasswordVisibleOne
-                          ? const Icon(
-                              Icons.visibility_off,
-                              size: 16,
-                            )
-                          : const Icon(
-                              Icons.visibility,
-                              size: 16,
-                            ),
-                      onPressed: () {
-                        setState(() {
-                          isPasswordVisibleOne = !isPasswordVisibleOne;
-                        });
-                      },
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.lock,
-                      size: 16,
-                      color: Color(0xFFe26f39),
-                    ),
-                    border: InputBorder.none,
-                    hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
-                    hintText: "*******",
-                  ),
-                  validator: (String? value) {
-                    if (value!.isEmpty) {
-                      return "password requred";
-                    }
-                  },
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(top: 19, left: 18, right: 18),
-                child: Text(
-                  'Comfirm Password.',
-                  style: TextStyle(
-                      fontSize: 14, letterSpacing: 1, color: Colors.black),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 18, right: 18),
-                child: TextFormField(
-                  style: const TextStyle(color: Colors.white),
-                  controller: _confirmPasswordController,
-                  obscureText: isPasswordVisible,
-                  decoration: InputDecoration(
-                    fillColor: const Color(0xFFf2dfce),
-                    filled: true,
-                    suffixIcon: IconButton(
-                      color: const Color(0xFFe26f39),
-                      icon: isPasswordVisible
-                          ? const Icon(
-                              Icons.visibility_off,
-                              size: 16,
-                            )
-                          : const Icon(
-                              Icons.visibility,
-                              size: 16,
-                            ),
-                      onPressed: () {
-                        setState(() {
-                          isPasswordVisible = !isPasswordVisible;
-                        });
-                      },
-                    ),
-                    prefixIcon: const Icon(
-                      Icons.lock,
-                      size: 16,
-                      color: Color(0xFFe26f39),
-                    ),
-                    border: InputBorder.none,
-                    hintStyle: const TextStyle(
-                        fontSize: 11, letterSpacing: 1, color: Colors.white),
-                    hintText: "*******",
-                  ),
-                  validator: (String? value) {
-                    if (value!.isEmpty) {
-                      return "password requred";
-                    } else if (value.length < 4 || value.length > 20) {
-                      return "Password must be betweem 5 and 20 characters";
-                    } else if (passwordtextEditingController.text !=
-                        _confirmPasswordController.text) {
-                      return "password do not match";
-                    }
-                  },
-                ),
-              ),
               const SizedBox(
                 height: 20,
               ),
+              InkWell(
+                  onTap: () => registerEmployerImgaf(context),
+                  child: Text("Send email")),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: OutlinedButton(
@@ -525,7 +377,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
                               setState(() {
                                 _loading = true;
                               });
-                              registerNewUser(context);
+                              registerEmployer(context);
 
                               // Navigator.of(context).push(
                               //     MaterialPageRoute(builder: (BuildContext context) {
@@ -543,7 +395,7 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
                               ),
                             ))
                         : const Text(
-                            ' Register',
+                            ' Register Employer',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 14,
@@ -586,45 +438,22 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
     }
   }
 
-  // Future uploadFile() async {
-  //   final document =
-  //       FirebaseFirestore.instance.collection("user").doc(users!.uid);
-  //   users!.updateDisplayName(nameController.text.trim());
-  //   String newImage;
-  //   if (_image == null) {
-  //     await document.update({
-  //       "displayName": nameController.text.trim(),
-  //       "email": emailController.text.trim(),
-  //       "phoneNo": phoneNoController.text.trim(),
-  //     });
-  //   } else {
-  //     ref = firebase_storage.FirebaseStorage.instance
-  //         .ref()
-  //         .child('images/${Path.basename(_image!.path)}');
-  //     await ref!.putFile(_image!);
-  //     final String downloadUrl = await ref!.getDownloadURL();
-  //     newImage = downloadUrl;
-  //     users!.updatePhotoURL(newImage);
+  String generateRandomPassword(int length) {
+    const String _chars =
+        'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    Random _rnd = Random.secure();
+    return String.fromCharCodes(Iterable.generate(
+        length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+  }
 
-  //     await document.update({
-  //       'PhotoUrl': newImage,
-  //       "displayName": nameController.text.trim(),
-  //       "email": emailController.text.trim(),
-  //       "phoneNo": phoneNoController.text.trim(),
-  //     });
-  //   }
-  // }
-  registerNewUserImgaf(BuildContext context) async {
+  registerEmployerImgaf(BuildContext context) async {
     try {
       print("hellow");
-      // Upload image to Firebase Storage
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('images/${Path.basename(_image!.path)}');
-      final uploadTask = ref.putFile(_image!);
+      String password =
+          generateRandomPassword(8); // Change the length as needed
+      print('Generated Password: $password');
 
-      // Wait for the upload to complete
-      await uploadTask.whenComplete(() => print('Image uploaded successfully'));
+      sendEmailToEmployer('msigwamb@gmail.com', password);
     } catch (e) {
       // Handle errors here
       displayToastMessage("Failed to upload image , $e", context);
@@ -634,55 +463,83 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
   }
 
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  registerNewUser(BuildContext context) async {
+  registerEmployer(BuildContext context) async {
     try {
-      final firebaseUser =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailtextEditingController.text,
-        password: passwordtextEditingController.text,
-      );
+      if (_image == null) {
+        displayToastMessage("Image is required", context);
+        return;
+      }
 
-      // Upload image to Firebase Storage
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('images/${Path.basename(_image!.path)}');
-      await ref.putFile(_image!);
-      final String downloadUrl = await ref.getDownloadURL();
+      final userQuery = await FirebaseFirestore.instance
+          .collection('users')
+          .where('id', isEqualTo: currentUser!.uid)
+          .limit(1)
+          .get();
 
-      // Save user data to Firestore
-      await FirebaseFirestore.instance
-          .collection("users")
-          .doc(firebaseUser.user!.uid)
-          .set({
-        "id": firebaseUser.user!.uid,
-        "displayName": nametextEditingController.text.trim(),
-        "email": emailtextEditingController.text.trim(),
-        "phoneNo": PhoneNumbertextEditingController.text.trim(),
-        "location": locationtextEditingController.text.trim(),
-        "shopName": shopNametextEditingController.text.trim(),
-        "mapLocation":
-            const GeoPoint(-6.1659, 39.2026), // Your hardcoded coordinates
-        "created_at": FieldValue.serverTimestamp(),
-        "role": "owner",
-        "PhotoUrl": downloadUrl,
-      });
+      if (userQuery.docs.isNotEmpty) {
+        final userDoc = userQuery.docs.first;
 
-      // Update user display name
-      await firebaseUser.user!
-          .updateDisplayName(nametextEditingController.text.trim());
+        print(userDoc);
+        final userId = userDoc.id;
+        print(userId);
 
-      // Update user email
-      await firebaseUser.user!
-          .verifyBeforeUpdateEmail(emailtextEditingController.text.trim());
+        final productData = userDoc.data() as Map<String, dynamic>;
 
-      _loading = false;
-      Navigator.pushReplacementNamed(
-        context,
-        LoginClass.idScreen,
-      );
-      displayToastMessage("Your Account has been created", context);
-      // User data saved successfully
-      // You may want to navigate to another screen or show a success message here
+        print(productData);
+        final String shopName = productData['shopName'];
+
+        String password = generateRandomPassword(8);
+        final firebaseUser =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailtextEditingController.text,
+          password: password,
+        );
+
+        // Upload image to Firebase Storage
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('images/${Path.basename(_image!.path)}');
+        await ref.putFile(_image!);
+        final String downloadUrl = await ref.getDownloadURL();
+
+        // Save user data to Firestore
+        await FirebaseFirestore.instance
+            .collection("users")
+            .doc(firebaseUser.user!.uid)
+            .set({
+          "id": firebaseUser.user!.uid,
+          "displayName": nametextEditingController.text.trim(),
+          "email": emailtextEditingController.text.trim(),
+          "phoneNo": PhoneNumbertextEditingController.text.trim(),
+          "location": locationtextEditingController.text.trim(),
+          "shopName": shopName,
+          "createdBy": currentUser!.uid,
+          "mapLocation":
+              const GeoPoint(-6.1659, 39.2026), // Your hardcoded coordinates
+          "created_at": FieldValue.serverTimestamp(),
+          "role": "employer",
+          "PhotoUrl": downloadUrl,
+        });
+
+        sendEmailToEmployer(emailtextEditingController.text.trim(), password);
+
+        // Update user display name
+        await firebaseUser.user!
+            .updateDisplayName(nametextEditingController.text.trim());
+
+        // Update user email
+        await firebaseUser.user!
+            .verifyBeforeUpdateEmail(emailtextEditingController.text.trim());
+
+        await FirebaseAuth.instance.signOut();
+        _loading = false;
+        // Navigator.pushReplacementNamed(
+        //   context,
+        //   LoginClass.idScreen,
+        // );
+        Navigator.pop(context);
+        displayToastMessage("Your Employer has been created", context);
+      }
     } catch (e) {
       // Handle errors here
       print("Error registering user: $e");
@@ -707,5 +564,25 @@ class _RegisterClassEmployerState extends State<RegisterEmployerClass> {
               "Error on displaying email $onError", context),
         );
     return message;
+  }
+
+  void sendEmailToEmployer(email, password) async {
+    try {
+      var message = """
+
+  <h2>Verification 🕒</h2>
+
+  <p>Dear ${email}, </p>
+
+<p>Your password is <strong>${password}</strong>. Use that password to log in to the shop management app.</p>
+
+""";
+
+      if (email != null && email is String && email.isNotEmpty) {
+        await sendEmailMessage(email, message); // Send email
+      }
+    } catch (error) {
+      print('Error sending email: $error');
+    }
   }
 }

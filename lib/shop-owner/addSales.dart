@@ -300,12 +300,11 @@ class _RegisterClassState extends State<AddSales> {
           .where('code', isEqualTo: codeEditingController.text.trim())
           .limit(1)
           .get();
-      print("PRODUCT SEARCHHHHHHHHHHHHHHHH");
 
       if (productQuery.docs.isNotEmpty) {
         print("PRODUCT FOUNDDDDDDDDDDDDDDDDDDDDDDDDD");
         final productDoc = productQuery.docs.first;
-        print("product is");
+
         print(productDoc);
         final productId = productDoc.id;
         print(productId);

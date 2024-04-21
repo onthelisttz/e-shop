@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mailer/mailer.dart';
+import 'package:mailer/smtp_server/gmail.dart';
 
 String readTimestamp(Timestamp timestamp) {
   var now = DateTime.now();
@@ -97,3 +99,32 @@ class proressDialogue extends StatelessWidget {
 }
 
 const myGoogleApiKey = 'AIzaSyBPk3-sjJDBZfO4jcX-UlrEXJ4A5IdDW-A';
+
+sendEmailMessage(receiverEmail, messageoBeSent) async {
+  String username = 'msigwamb@gmail.com';
+  String password = 'dueftnrbaeqsopfa';
+
+  final smtpServer = gmail(username, password);
+
+  // Create our message.
+  final message = Message()
+    ..from = Address(username, 'Shop Management')
+    ..recipients.add(receiverEmail)
+    // ..ccRecipients.addAll([
+    //   'onthelisttz@gmail.com',
+    // ])
+    // ..bccRecipients.add(Address('bccAddress@example.com'))
+    ..subject = 'Verification 🕒'
+    ..text = 'your password for login'
+    ..html = messageoBeSent;
+
+  try {
+    final sendReport = await send(message, smtpServer);
+    print('Message sent: ' + sendReport.toString());
+  } on MailerException catch (e) {
+    print('Message not sent.');
+    for (var p in e.problems) {
+      print('Problem: ${p.code}: ${p.msg}');
+    }
+  }
+}

@@ -16,6 +16,7 @@ import 'package:path/path.dart' as Path;
 import 'dart:io';
 
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:shared_preferences/shared_preferences.dart';
 
 const List<String> list = <String>[
   'user',
@@ -545,128 +546,96 @@ class _RegisterClassState extends State<AddProduct> {
   User? user = FirebaseAuth.instance.currentUser;
 
   Future<void> addProduct() async {
-    try {
-      // Check if the product code already exists
-      final codeExistsQuery = await FirebaseFirestore.instance
-          .collection('products')
-          .where('code', isEqualTo: codeEditingController.text.trim())
-          .limit(1)
-          .get();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      // If the query returns any documents, the code already exists
-      if (codeExistsQuery.docs.isNotEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content:
-                Text('Product code already exists. Please use another code.'),
-          ),
-        );
+    String? userId = prefs.getString('userId');
+    if (userId != null) {
+      try {
+        // Check if the product code already exists
+        final codeExistsQuery = await FirebaseFirestore.instance
+            .collection('products')
+            .where('code', isEqualTo: codeEditingController.text.trim())
+            .limit(1)
+            .get();
+
+        // If the query returns any documents, the code already exists
+        if (codeExistsQuery.docs.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content:
+                  Text('Product code already exists. Please use another code.'),
+            ),
+          );
+          setState(() {
+            _loading = false;
+          });
+          return; // Exit the method without adding the product
+        }
+
+        // If the code is unique, proceed to add the product
+        final ref = FirebaseStorage.instance
+            .ref()
+            .child('images/${Path.basename(_image!.path)}');
+        await ref.putFile(_image!);
+        final String downloadUrl = await ref.getDownloadURL();
+        var buyingPrice = int.parse(buyingPriceEditingController.text.trim());
+        var sellingPrice = int.parse(sellingPriceEditingController.text.trim());
+        var qntity = int.parse(quantiyEditingController.text.trim());
+        await document.set({
+          'id': document.id,
+          'image': downloadUrl,
+          "productName": productNametextEditingController.text.trim(),
+          "descripton": descrptionEditingController.text.trim(),
+          "code": codeEditingController.text.trim(),
+          "owner": userId,
+          "buyingPrice": buyingPrice,
+          "sellingPrice": sellingPrice,
+          "quantity": qntity,
+          "measuremnet": measuremntEditingCotroller.text.trim(),
+          "PostedAt": FieldValue.serverTimestamp(),
+        });
+        addExpenses();
         setState(() {
           _loading = false;
         });
-        return; // Exit the method without adding the product
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Product added successfully'),
+          ),
+        );
+        Navigator.pop(context);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Unable to add product'),
+          ),
+        );
       }
-
-      // If the code is unique, proceed to add the product
-      final ref = FirebaseStorage.instance
-          .ref()
-          .child('images/${Path.basename(_image!.path)}');
-      await ref.putFile(_image!);
-      final String downloadUrl = await ref.getDownloadURL();
-      var buyingPrice = int.parse(buyingPriceEditingController.text.trim());
-      var sellingPrice = int.parse(sellingPriceEditingController.text.trim());
-      var qntity = int.parse(quantiyEditingController.text.trim());
-      await document.set({
-        'id': document.id,
-        'image': downloadUrl,
-        "productName": productNametextEditingController.text.trim(),
-        "descripton": descrptionEditingController.text.trim(),
-        "code": codeEditingController.text.trim(),
-        "owner": user!.uid,
-        "buyingPrice": buyingPrice,
-        "sellingPrice": sellingPrice,
-        "quantity": qntity,
-        "measuremnet": measuremntEditingCotroller.text.trim(),
-        "PostedAt": FieldValue.serverTimestamp(),
-      });
-      addExpenses();
-      setState(() {
-        _loading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Product added successfully'),
-        ),
-      );
-      Navigator.pop(context);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to add product'),
-        ),
-      );
     }
   }
 
-  // addProduct() async {
-  //   try {
-  //     final ref = FirebaseStorage.instance
-  //         .ref()
-  //         .child('images/${Path.basename(_image!.path)}');
-  //     await ref.putFile(_image!);
-  //     final String downloadUrl = await ref.getDownloadURL();
-  //     var buyingPrice = int.parse(buyingPriceEditingController.text.trim());
-  //     var sellingPrice = int.parse(sellingPriceEditingController.text.trim());
-  //     await document.set({
-  //       'id': document.id,
-  //       'image': downloadUrl,
-  //       "productName": productNametextEditingController.text.trim(),
-  //       "descripton": descrptionEditingController.text.trim(),
-  //       "code": codeEditingController.text.trim(),
-  //       "owner": user!.uid,
-  //       "buyingPrice": buyingPrice,
-  //       "sellingPrice": sellingPrice,
-  //       "quantity": quantiyEditingController.text.trim(),
-  //       "measuremnet": measuremntEditingCotroller.text.trim(),
-  //       "PostedAt": FieldValue.serverTimestamp(),
-  //     });
-  //     addExpenses();
-  //     setState(() {
-  //       _loading = false;
-  //     });
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text('product added Successfull'),
-  //       ),
-  //     );
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(
-  //         content: Text('Unable to add product'),
-  //       ),
-  //     );
-  //   }
-
-  //   // Navigator.pop(context);
-  // }
-
   Future addExpenses() async {
-    var price = int.parse(buyingPriceEditingController.text.trim());
-    var quantity = int.parse(quantiyEditingController.text.trim());
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    var result = price * quantity;
-    await documentExpenses.set({
-      'id': documentExpenses.id,
-      "date": FieldValue.serverTimestamp(),
-      "owner": user!.uid,
-      "title": "Buying product",
-      "price": result,
-      "description": " this is the cost associated after buying product",
-      "status": "approved",
-      "PostedAt": FieldValue.serverTimestamp(),
-    });
+    String? userId = prefs.getString('userId');
+    if (userId != null) {
+      var price = int.parse(buyingPriceEditingController.text.trim());
+      var quantity = int.parse(quantiyEditingController.text.trim());
 
-    // Navigator.pop(context);s
+      var result = price * quantity;
+      await documentExpenses.set({
+        'id': documentExpenses.id,
+        "date": FieldValue.serverTimestamp(),
+        "owner": userId,
+        "title": "Buying product",
+        "price": result,
+        "description": " this is the cost associated after buying product",
+        "status": "approved",
+        "PostedAt": FieldValue.serverTimestamp(),
+      });
+
+      // Navigator.pop(context);s
+    }
   }
 
   final documentExpenses =

@@ -25,6 +25,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 import 'package:path/path.dart' as Path;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 
@@ -464,86 +465,92 @@ class _RegisterEmployerClassState extends State<RegisterEmployerClass> {
 
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   registerEmployer(BuildContext context) async {
-    try {
-      if (_image == null) {
-        displayToastMessage("Image is required", context);
-        return;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? userId = prefs.getString('userId');
+    if (userId != null) {
+      try {
+        if (_image == null) {
+          displayToastMessage("Image is required", context);
+          return;
+        }
+
+        final userQuery = await FirebaseFirestore.instance
+            .collection('users')
+            .where('id', isEqualTo: userId)
+            .limit(1)
+            .get();
+
+        if (userQuery.docs.isNotEmpty) {
+          final userDoc = userQuery.docs.first;
+
+          print(userDoc);
+          final userId = userDoc.id;
+          print(userId);
+
+          final productData = userDoc.data() as Map<String, dynamic>;
+
+          print(productData);
+          final String shopName = productData['shopName'];
+
+          String password = generateRandomPassword(8);
+          final firebaseUser =
+              await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: emailtextEditingController.text,
+            password: password,
+          );
+
+          // Upload image to Firebase Storage
+          final ref = FirebaseStorage.instance
+              .ref()
+              .child('images/${Path.basename(_image!.path)}');
+          await ref.putFile(_image!);
+          final String downloadUrl = await ref.getDownloadURL();
+
+          // Save user data to Firestore
+          await FirebaseFirestore.instance
+              .collection("users")
+              .doc(firebaseUser.user!.uid)
+              .set({
+            "id": firebaseUser.user!.uid,
+            "displayName": nametextEditingController.text.trim(),
+            "email": emailtextEditingController.text.trim(),
+            "phoneNo": PhoneNumbertextEditingController.text.trim(),
+            "location": locationtextEditingController.text.trim(),
+            "shopName": shopName,
+            "createdBy": userId,
+            "isBudgetAdded": true,
+            "mapLocation":
+                const GeoPoint(-6.1659, 39.2026), // Your hardcoded coordinates
+            "created_at": FieldValue.serverTimestamp(),
+            "role": "employer",
+            "PhotoUrl": downloadUrl,
+          });
+
+          sendEmailToEmployer(emailtextEditingController.text.trim(), password);
+
+          // Update user display name
+          await firebaseUser.user!
+              .updateDisplayName(nametextEditingController.text.trim());
+
+          // Update user email
+          await firebaseUser.user!
+              .verifyBeforeUpdateEmail(emailtextEditingController.text.trim());
+
+          await FirebaseAuth.instance.signOut();
+          _loading = false;
+          // Navigator.pushReplacementNamed(
+          //   context,
+          //   LoginClass.idScreen,
+          // );
+          Navigator.pop(context);
+          displayToastMessage("Your Employer has been created", context);
+        }
+      } catch (e) {
+        // Handle errors here
+        print("Error registering user: $e");
+        // You can also show an error message to the user using a Snackbar or Toast
       }
-
-      final userQuery = await FirebaseFirestore.instance
-          .collection('users')
-          .where('id', isEqualTo: currentUser!.uid)
-          .limit(1)
-          .get();
-
-      if (userQuery.docs.isNotEmpty) {
-        final userDoc = userQuery.docs.first;
-
-        print(userDoc);
-        final userId = userDoc.id;
-        print(userId);
-
-        final productData = userDoc.data() as Map<String, dynamic>;
-
-        print(productData);
-        final String shopName = productData['shopName'];
-
-        String password = generateRandomPassword(8);
-        final firebaseUser =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailtextEditingController.text,
-          password: password,
-        );
-
-        // Upload image to Firebase Storage
-        final ref = FirebaseStorage.instance
-            .ref()
-            .child('images/${Path.basename(_image!.path)}');
-        await ref.putFile(_image!);
-        final String downloadUrl = await ref.getDownloadURL();
-
-        // Save user data to Firestore
-        await FirebaseFirestore.instance
-            .collection("users")
-            .doc(firebaseUser.user!.uid)
-            .set({
-          "id": firebaseUser.user!.uid,
-          "displayName": nametextEditingController.text.trim(),
-          "email": emailtextEditingController.text.trim(),
-          "phoneNo": PhoneNumbertextEditingController.text.trim(),
-          "location": locationtextEditingController.text.trim(),
-          "shopName": shopName,
-          "createdBy": currentUser!.uid,
-          "mapLocation":
-              const GeoPoint(-6.1659, 39.2026), // Your hardcoded coordinates
-          "created_at": FieldValue.serverTimestamp(),
-          "role": "employer",
-          "PhotoUrl": downloadUrl,
-        });
-
-        sendEmailToEmployer(emailtextEditingController.text.trim(), password);
-
-        // Update user display name
-        await firebaseUser.user!
-            .updateDisplayName(nametextEditingController.text.trim());
-
-        // Update user email
-        await firebaseUser.user!
-            .verifyBeforeUpdateEmail(emailtextEditingController.text.trim());
-
-        await FirebaseAuth.instance.signOut();
-        _loading = false;
-        // Navigator.pushReplacementNamed(
-        //   context,
-        //   LoginClass.idScreen,
-        // );
-        Navigator.pop(context);
-        displayToastMessage("Your Employer has been created", context);
-      }
-    } catch (e) {
-      // Handle errors here
-      print("Error registering user: $e");
-      // You can also show an error message to the user using a Snackbar or Toast
     }
   }
 

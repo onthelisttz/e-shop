@@ -1,13 +1,17 @@
 import 'dart:ffi';
 
+import 'package:e_shop/shop-owner/addBudget.dart';
+import 'package:e_shop/shop-owner/budgetDisplayPage.dart';
 import 'package:e_shop/shop-owner/employerList.dart';
 import 'package:e_shop/shop-owner/shopProgressChart.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Dashbord extends StatefulWidget {
+  static const String idScreen = "dashboard";
   @override
   _DashbordState createState() => _DashbordState();
 }
@@ -17,6 +21,7 @@ User? user = FirebaseAuth.instance.currentUser;
 class _DashbordState extends State<Dashbord> {
   late Stream<QuerySnapshot> _salesListStream;
   late Stream<QuerySnapshot> _expensesListStream;
+  late Stream<QuerySnapshot> _budgetListStream;
   double totalSalesToday = 0;
   double totalSalesMonth = 0;
   double totalSalesYesterday = 0;
@@ -28,26 +33,64 @@ class _DashbordState extends State<Dashbord> {
   double profitLossToday = 0;
   double profitLossThisMonth = 0;
 
+  double totalBudget = 0;
+  double monthlyExpense = 0;
+
   final _format = NumberFormat('##,###,###.##');
   @override
   void initState() {
     super.initState();
-    _salesListStream = FirebaseFirestore.instance
-        .collection('sales')
-        .where("postedBy", isEqualTo: user!.uid)
-        .snapshots();
-    _expensesListStream = FirebaseFirestore.instance
-        .collection('expenses')
-        .where("owner", isEqualTo: user!.uid)
-        .where("status", isEqualTo: 'approved')
-        .snapshots();
+    _getUserIDFromSharedPreferences();
+  }
 
-    calculateMetrics();
+  Future<void> _getUserIDFromSharedPreferences() async {
+    // Get an instance of SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Retrieve the user ID from SharedPreferences
+    String? userId = prefs.getString('userId');
+
+    if (userId != null) {
+      print("CURRENT USER IS");
+      print(userId);
+      _budgetListStream = FirebaseFirestore.instance
+          .collection('budget')
+          .where("owner", isEqualTo: userId)
+          .snapshots();
+
+      _salesListStream = FirebaseFirestore.instance
+          .collection('sales')
+          .where("postedBy", isEqualTo: userId)
+          .snapshots();
+      _expensesListStream = FirebaseFirestore.instance
+          .collection('expenses')
+          .where("shopId", isEqualTo: userId)
+          .where("status", isEqualTo: 'approved')
+          .snapshots();
+
+      calculateMetrics();
+    }
   }
 
   void calculateMetrics() {
     DateTime today = DateTime.now();
     DateTime yesterday = DateTime.now().subtract(Duration(days: 1));
+
+    _budgetListStream.listen((expensesSnapshot) {
+      expensesSnapshot.docs.forEach((doc) {
+        var data = doc.data() as Map<String, dynamic>;
+        // DateTime expenseDate = (data['date'] as Timestamp).toDate();
+
+        totalBudget = data['totalBudget'];
+        monthlyExpense = data['directCost']['rent'] +
+            data['directCost']['salary'] +
+            data['directCost']['emergency'];
+      });
+
+      setState(() {
+        // Trigger rebuild after calculations
+      });
+    });
 
     _expensesListStream.listen((expensesSnapshot) {
       totalExpensesToday = 0;
@@ -204,41 +247,61 @@ class _DashbordState extends State<Dashbord> {
                 ],
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.all(3.0),
-              child: Container(
-                decoration: BoxDecoration(
-                    boxShadow: const <BoxShadow>[
-                      BoxShadow(
-                          color: Color(0xFFe26f39),
-                          blurRadius: 1,
-                          spreadRadius: 0.1)
-                    ],
-                    // color: Color(0xFFFFFFFF),
-                    color: Clicked1 ? const Color(0xFFf2dfce) : Colors.white,
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(10.0),
-                    )),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Icon(Icons.monetization_on_rounded,
-                          size: 25, color: Colors.black.withOpacity(0.6)),
-                      Text(
-                        _format.format(estimatedBudgetToday),
-                        style: TextStyle(
-                            letterSpacing: 1,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black.withOpacity(0.6),
-                            fontSize: 15),
-                      ),
-                    ],
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (BuildContext context) {
+                    return BudgetDisplayPage();
+                  }));
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                      boxShadow: const <BoxShadow>[
+                        BoxShadow(
+                            color: Color(0xFFe26f39),
+                            blurRadius: 1,
+                            spreadRadius: 0.1)
+                      ],
+                      // color: Color(0xFFFFFFFF),
+                      color: Clicked1 ? const Color(0xFFf2dfce) : Colors.white,
+                      borderRadius: const BorderRadius.all(
+                        Radius.circular(10.0),
+                      )),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.monetization_on_rounded,
+                            size: 25, color: Colors.black.withOpacity(0.6)),
+                        Row(
+                          children: [
+                            Text(
+                              _format.format(totalBudget),
+                              style: TextStyle(
+                                  letterSpacing: 1,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black.withOpacity(0.6),
+                                  fontSize: 15),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Icon(Icons.remove_red_eye,
+                                  size: 18,
+                                  color: Colors.black.withOpacity(0.6)),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
+
             const Padding(
               padding: EdgeInsets.only(left: 8.0, top: 20),
               child: Row(
@@ -487,7 +550,8 @@ class _DashbordState extends State<Dashbord> {
                             ),
                           ),
                           Text(
-                            _format.format(totalExpensesThisMonth),
+                            _format.format(
+                                totalExpensesThisMonth + monthlyExpense),
                             style: const TextStyle(
                                 fontSize: 13,
                                 letterSpacing: 1,
@@ -531,7 +595,8 @@ class _DashbordState extends State<Dashbord> {
                             ),
                           ),
                           Text(
-                            _format.format(profitLossThisMonth),
+                            _format
+                                .format(profitLossThisMonth - monthlyExpense),
                             style: const TextStyle(
                                 fontSize: 13,
                                 letterSpacing: 1,

@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shop/employers/employerHome.dart';
 import 'package:e_shop/registration/login.dart';
 import 'package:e_shop/registration/register.dart';
+import 'package:e_shop/shop-owner/addBudget.dart';
+import 'package:e_shop/shop-owner/dashbord.dart';
 import 'package:e_shop/shop-owner/shopOwnerHomepage.dart';
 import 'package:flutter/material.dart';
 
@@ -72,6 +74,7 @@ class MyApp extends StatelessWidget {
         EmployerHomepage.idScreen: (context) => const EmployerHomepage(),
         RegisterClass.idScreen: (context) => RegisterClass(),
         LoginClass.idScreen: (context) => LoginClass(),
+        BudgetScreen.idScreen: (context) => BudgetScreen(),
       },
     );
   }
@@ -83,8 +86,12 @@ class MyApp extends StatelessWidget {
 // #f05929
 // rename setAppName --targets ios,android --value "E-lawyer"
 // adb connect 10.25.202.202:5555
-// adb connect 192.168.1.154:5555
+
 // adb tcpip 5555
+// adb connect 192.168.1.117:5555
+
+// run on the device
+// set FLUTTER_DEVICE=192.168.1.117:5555
 
 class RoleChecker extends StatefulWidget {
   const RoleChecker({Key? key}) : super(key: key);
@@ -95,6 +102,8 @@ class RoleChecker extends StatefulWidget {
 
 class _RoleCheckerState extends State<RoleChecker> {
   String role = '';
+
+  bool isBudgetAdded = false;
 
   @override
   void initState() {
@@ -121,15 +130,21 @@ class _RoleCheckerState extends State<RoleChecker> {
         if (data != null && data.containsKey('role')) {
           // Check if the 'role' field exists in the document
           String userRole = data['role'];
-
+          bool isBudgetAddedNew = data['isBudgetAdded'];
           setState(() {
             role = userRole;
+            isBudgetAdded = isBudgetAddedNew;
           });
 
           // Navigation logic...
           if (role == 'owner') {
-            Navigator.pushNamedAndRemoveUntil(
-                context, ShopOwnerHomepage.idScreen, (route) => false);
+            if (isBudgetAdded) {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, ShopOwnerHomepage.idScreen, (route) => false);
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, BudgetScreen.idScreen, (route) => false);
+            }
           } else if (role == 'employer') {
             // Replace 'LawyerHomePage' with the actual name of your lawyer home page
             Navigator.pushNamedAndRemoveUntil(

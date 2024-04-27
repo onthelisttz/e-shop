@@ -666,6 +666,7 @@ class _RegisterClassState extends State<RegisterClass> {
         "phoneNo": PhoneNumbertextEditingController.text.trim(),
         "location": locationtextEditingController.text.trim(),
         "shopName": shopNametextEditingController.text.trim(),
+        "isBudgetAdded": false,
         "mapLocation":
             const GeoPoint(-6.1659, 39.2026), // Your hardcoded coordinates
         "created_at": FieldValue.serverTimestamp(),

@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddSales extends StatefulWidget {
   const AddSales({Key? key}) : super(key: key);
@@ -294,92 +295,98 @@ class _RegisterClassState extends State<AddSales> {
 
   // Your AddSales method with product update
   Future<void> addSales() async {
-    try {
-      final productQuery = await FirebaseFirestore.instance
-          .collection('products')
-          .where('code', isEqualTo: codeEditingController.text.trim())
-          .limit(1)
-          .get();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-      if (productQuery.docs.isNotEmpty) {
-        print("PRODUCT FOUNDDDDDDDDDDDDDDDDDDDDDDDDD");
-        final productDoc = productQuery.docs.first;
+    String? userId = prefs.getString('userId');
+    if (userId != null) {
+      try {
+        final productQuery = await FirebaseFirestore.instance
+            .collection('products')
+            .where('code', isEqualTo: codeEditingController.text.trim())
+            .limit(1)
+            .get();
 
-        print(productDoc);
-        final productId = productDoc.id;
-        print(productId);
-        final productData = productDoc.data() as Map<String, dynamic>;
-        print("product data is");
-        print(productData);
-        final int availableQuantity = productData['quantity'] ?? 0;
-        final int soldQuantity =
-            int.parse(quantiyEditingController.text.trim());
+        if (productQuery.docs.isNotEmpty) {
+          print("PRODUCT FOUNDDDDDDDDDDDDDDDDDDDDDDDDD");
+          final productDoc = productQuery.docs.first;
 
-        print(soldQuantity);
-        print(availableQuantity);
-        // Check if there is enough quantity available for sale
-        if (soldQuantity <= availableQuantity) {
-          // Update product quantity
-          await FirebaseFirestore.instance
-              .collection('products')
-              .doc(productId)
-              .update({
-            'quantity': availableQuantity - soldQuantity,
-          });
-          final document = FirebaseFirestore.instance.collection('sales').doc();
-          // Add sale
-          await document.set({
-            'id': document.id,
-            "productName": productNametextEditingController.text.trim(),
-            "code": codeEditingController.text.trim(),
-            "postedBy": user!.uid,
-            "price": int.parse(priceEditingController.text.trim()),
-            "quantity": soldQuantity,
-            "PostedAt": FieldValue.serverTimestamp(),
-          });
+          print(productDoc);
+          final productId = productDoc.id;
+          print(productId);
+          final productData = productDoc.data() as Map<String, dynamic>;
+          print("product data is");
+          print(productData);
+          final int availableQuantity = productData['quantity'] ?? 0;
+          final int soldQuantity =
+              int.parse(quantiyEditingController.text.trim());
 
-          setState(() {
-            _loading = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Sales added successfully'),
-            ),
-          );
-          Navigator.pop(context);
+          print(soldQuantity);
+          print(availableQuantity);
+          // Check if there is enough quantity available for sale
+          if (soldQuantity <= availableQuantity) {
+            // Update product quantity
+            await FirebaseFirestore.instance
+                .collection('products')
+                .doc(productId)
+                .update({
+              'quantity': availableQuantity - soldQuantity,
+            });
+            final document =
+                FirebaseFirestore.instance.collection('sales').doc();
+            // Add sale
+            await document.set({
+              'id': document.id,
+              "productName": productNametextEditingController.text.trim(),
+              "code": codeEditingController.text.trim(),
+              "postedBy": userId,
+              "price": int.parse(priceEditingController.text.trim()),
+              "quantity": soldQuantity,
+              "PostedAt": FieldValue.serverTimestamp(),
+            });
+
+            setState(() {
+              _loading = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Sales added successfully'),
+              ),
+            );
+            Navigator.pop(context);
+          } else {
+            // Insufficient quantity available for sale
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Insufficient quantity available for sale.'),
+              ),
+            );
+            setState(() {
+              _loading = false;
+            });
+          }
         } else {
-          // Insufficient quantity available for sale
+          print("PRODUCT NOT FOUNDDDDDDDDD");
+          // Product not found
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('Insufficient quantity available for sale.'),
+              content:
+                  Text('Product not found with that code. Unable to add sale.'),
             ),
           );
           setState(() {
             _loading = false;
           });
         }
-      } else {
-        print("PRODUCT NOT FOUNDDDDDDDDD");
-        // Product not found
+      } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content:
-                Text('Product not found with that code. Unable to add sale.'),
+            content: Text('Unable to add sale'),
           ),
         );
         setState(() {
           _loading = false;
         });
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to add sale'),
-        ),
-      );
-      setState(() {
-        _loading = false;
-      });
     }
 
     // AddSales() async {
@@ -388,7 +395,7 @@ class _RegisterClassState extends State<AddSales> {
     //       'id': document.id,
     //       "productName": productNametextEditingController.text.trim(),
     //       "code": codeEditingController.text.trim(),
-    //       "postedBy": user!.uid,
+    //       "postedBy": userId,
     //       "price": priceEditingController.text.trim(),
     //       "quantity": quantiyEditingController.text.trim(),
     //       "PostedAt": FieldValue.serverTimestamp(),

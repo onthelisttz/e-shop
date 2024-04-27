@@ -10,17 +10,17 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ExpensesList extends StatefulWidget {
-  const ExpensesList({Key? key}) : super(key: key);
+class EmployerExpenses extends StatefulWidget {
+  const EmployerExpenses({Key? key}) : super(key: key);
 
   @override
-  State<ExpensesList> createState() => _ExpensesListState();
+  State<EmployerExpenses> createState() => _EmployerExpensesState();
 }
 
 User? user = FirebaseAuth.instance.currentUser;
-final Stream<QuerySnapshot> _ExpensesListtreams = FirebaseFirestore.instance
+final Stream<QuerySnapshot> _EmployerExpensestreams = FirebaseFirestore.instance
     .collection('expenses')
-    .where("shopId", isEqualTo: user!.uid)
+    .where("owner", isEqualTo: user!.uid)
     // .where("status", isEqualTo: 'approved')
     // .where("clientId", isEqualTo: user!.uid)
     .snapshots();
@@ -37,8 +37,9 @@ String readTimestamp2(Timestamp timestamp) {
   return time;
 }
 
-class _ExpensesListState extends State<ExpensesList> {
+class _EmployerExpensesState extends State<EmployerExpenses> {
   final _format = NumberFormat('##,###,###.##');
+
   String UserID = "";
 
   @override
@@ -96,7 +97,7 @@ class _ExpensesListState extends State<ExpensesList> {
                 child: StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('expenses')
-                      .where("shopId", isEqualTo: UserID)
+                      .where("owner", isEqualTo: UserID)
                       .snapshots(),
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {

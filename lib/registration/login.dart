@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:e_shop/employers/employerHome.dart';
 import 'package:e_shop/registration/register.dart';
+import 'package:e_shop/shop-owner/addBudget.dart';
 import 'package:e_shop/shop-owner/shopOwnerHomepage.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,6 +11,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginClass extends StatefulWidget {
   const LoginClass({Key? key}) : super(key: key);
@@ -31,6 +33,8 @@ class _LoginClassState extends State<LoginClass> {
   bool passwordoned = false;
   String emailtext = 'email required';
   bool _loading = false;
+
+  bool isBudgetAdded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -277,25 +281,34 @@ class _LoginClassState extends State<LoginClass> {
           .collection('users')
           .doc(user.uid)
           .get();
-      print("check role");
-      print("ROLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-      print(user.uid);
+
       if (snap.exists) {
-        print(
-            "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-        // Check if the document exists
         final data = snap.data() as Map<String, dynamic>?; // Explicit cast
         if (data != null && data.containsKey('role')) {
           // Check if the 'role' field exists in the document
           String userRole = data['role'];
-          print("ROLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+          bool isBudgetAddedNew = data['isBudgetAdded'];
+
+          String currentUser = data['id'];
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+
+// Save the user ID to SharedPreferences
+          await prefs.setString('userId', currentUser);
           setState(() {
             role = userRole;
+            isBudgetAdded = isBudgetAddedNew;
           });
           // Navigation logic...
           if (role == 'owner') {
-            Navigator.pushNamedAndRemoveUntil(
-                context, ShopOwnerHomepage.idScreen, (route) => false);
+            if (isBudgetAdded) {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, ShopOwnerHomepage.idScreen, (route) => false);
+            } else {
+              Navigator.pushNamedAndRemoveUntil(
+                  context, BudgetScreen.idScreen, (route) => false);
+            }
+            // Navigator.pushNamedAndRemoveUntil(
+            //     context, ShopOwnerHomepage.idScreen, (route) => false);
           } else if (role == 'employer') {
             Navigator.pushNamedAndRemoveUntil(
                 context, EmployerHomepage.idScreen, (route) => false);

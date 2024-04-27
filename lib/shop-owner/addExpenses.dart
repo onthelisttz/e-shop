@@ -9,6 +9,7 @@ import 'package:flutter/gestures.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AddExpenses extends StatefulWidget {
   AddExpenses({
@@ -306,25 +307,44 @@ class _AddExpensesState extends State<AddExpenses> {
   }
 
   Future addExpenses() async {
-    await document.set({
-      'id': document.id,
-      "date": date,
-      "owner": user!.uid,
-      "title": titletextEditingController.text,
-      "price": priceEditingController.text,
-      "description": adescriptiontextEditingController.text,
-      "status": "pending",
-      "PostedAt": FieldValue.serverTimestamp(),
-    });
-    setState(() {
-      _loading = false;
-    });
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Expenses added Successfull'),
-      ),
-    );
-    Navigator.pop(context);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? userId = prefs.getString('userId');
+    if (userId != null) {
+      // Fetching the current user's document
+      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .get();
+
+      // Extracting createdBy from the user document
+      String createdBy = userDoc['createdBy'];
+
+      // Setting the expenses document with shopId taken from createdBy
+      await document.set({
+        'id': document.id,
+        "date": date,
+        "owner": userId,
+        "title": titletextEditingController.text,
+        "price": priceEditingController.text,
+        "description": adescriptiontextEditingController.text,
+        "status": "pending",
+        "shopId": createdBy, // Setting shopId with createdBy
+        "PostedAt": FieldValue.serverTimestamp(),
+      });
+
+      setState(() {
+        _loading = false;
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Expenses added successfully'),
+        ),
+      );
+
+      Navigator.pop(context);
+    }
   }
 
   final document = FirebaseFirestore.instance.collection('expenses').doc();

@@ -35,7 +35,9 @@ class _EmployerListState extends State<EmployerList> {
 
     String? userId = prefs.getString('userId');
     if (userId != null) {
-      UserID = userId;
+      setState(() {
+        UserID = userId;
+      });
     }
   }
 

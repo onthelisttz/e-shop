@@ -6,6 +6,7 @@ import 'package:e_shop/shop-owner/addBudget.dart';
 import 'package:e_shop/shop-owner/dashbord.dart';
 import 'package:e_shop/shop-owner/shopOwnerHomepage.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:splash_screen_view/SplashScreenView.dart';
 
@@ -113,15 +114,20 @@ class _RoleCheckerState extends State<RoleChecker> {
 
   Future<void> _checkRole() async {
     try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
+      // User? user = FirebaseAuth.instance.currentUser;
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      String? userId = prefs.getString('userId');
+
+      if (userId == null) {
         // Handle case where user is not authenticated
         return;
       }
 
       final DocumentSnapshot snap = await FirebaseFirestore.instance
           .collection('users')
-          .doc(user.uid)
+          .doc(userId)
           .get();
 
       if (snap.exists) {

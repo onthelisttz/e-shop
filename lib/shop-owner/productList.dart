@@ -39,7 +39,9 @@ class _ProductListState extends State<ProductList> {
 
     String? userId = prefs.getString('userId');
     if (userId != null) {
-      UserID = userId;
+      setState(() {
+        UserID = userId;
+      });
     }
   }
 

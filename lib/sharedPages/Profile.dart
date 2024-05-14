@@ -28,10 +28,11 @@ class _ProfileState extends State<Profile> {
 
   Future<void> _fetchUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     String? userId = prefs.getString('userId');
     if (userId != null) {
-      UserID = userId;
+      setState(() {
+        UserID = userId;
+      });
     }
   }
 

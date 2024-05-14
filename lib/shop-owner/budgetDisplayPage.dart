@@ -315,7 +315,7 @@ class _BudgetDisplayPageState extends State<BudgetDisplayPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'Important Products 60%: ${_format.format(data['importantBudget'])}',
+                            'Important Items 60%: ${_format.format(data['importantBudget'])}',
                             style: TextStyle(
                                 fontSize: 15,
                                 letterSpacing: 1,
@@ -334,7 +334,7 @@ class _BudgetDisplayPageState extends State<BudgetDisplayPage> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'Unimportant Products 40%: ${_format.format(data['unimportantBudget'])}',
+                            'Unimportant Items 40%: ${_format.format(data['unimportantBudget'])}',
                             style: TextStyle(
                                 fontSize: 15,
                                 letterSpacing: 1,

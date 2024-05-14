@@ -70,44 +70,45 @@ class _ProductListState extends State<EmployerSalesList> {
           }
 
           return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              String priceString = data["price"].toString();
-              double price = double.parse(priceString);
-              return InkWell(
-                onTap: () {},
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      side: BorderSide(color: Colors.black, width: 0.1),
-                    ),
-                    elevation: 0,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListTile(
-                        title: Text(data['productName']),
-                        subtitle: Text(_format.format(
-                            price)), // Modify as per your formatting needs
-                        trailing: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: Text(data['PostedAt'] != null
-                                  ? readTimestamp2(data['PostedAt'])
-                                  : "No timestamp"),
+              children: snapshot.data != null
+                  ? snapshot.data!.docs.map((DocumentSnapshot document) {
+                      Map<String, dynamic> data =
+                          document.data()! as Map<String, dynamic>;
+                      String priceString = data["price"].toString();
+                      double price = double.parse(priceString);
+                      return InkWell(
+                        onTap: () {},
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                              side: BorderSide(color: Colors.black, width: 0.1),
                             ),
-                          ],
+                            elevation: 0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListTile(
+                                title: Text(data['productName']),
+                                subtitle: Text(_format.format(
+                                    price)), // Modify as per your formatting needs
+                                trailing: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text(data['PostedAt'] != null
+                                          ? readTimestamp2(data['PostedAt'])
+                                          : "No timestamp"),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }).toList(),
-          );
+                      );
+                    }).toList()
+                  : []); // Return an empty list if snapshot.data is null
         },
       ),
     );

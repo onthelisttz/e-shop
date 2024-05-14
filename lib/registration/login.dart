@@ -292,13 +292,12 @@ class _LoginClassState extends State<LoginClass> {
           String currentUser = data['id'];
           SharedPreferences prefs = await SharedPreferences.getInstance();
 
-// Save the user ID to SharedPreferences
           await prefs.setString('userId', currentUser);
           setState(() {
             role = userRole;
             isBudgetAdded = isBudgetAddedNew;
           });
-          // Navigation logic...
+
           if (role == 'owner') {
             if (isBudgetAdded) {
               Navigator.pushNamedAndRemoveUntil(
@@ -320,15 +319,11 @@ class _LoginClassState extends State<LoginClass> {
           });
         }
       } else {
-        print("NOT FOUNDDDDDDDDDDDDDDDDDDDDDDDDDDD");
-        // Handle case where document doesn't exist
         setState(() {
           role = 'user_not_found';
         });
       }
     } catch (e) {
-      // Handle errors
-      print("Error checking user role: $e");
       setState(() {
         role = 'error';
       });

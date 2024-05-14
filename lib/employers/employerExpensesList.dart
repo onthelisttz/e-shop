@@ -53,7 +53,9 @@ class _EmployerExpensesState extends State<EmployerExpenses> {
 
     String? userId = prefs.getString('userId');
     if (userId != null) {
-      UserID = userId;
+      setState(() {
+        UserID = userId;
+      });
     }
   }
 

@@ -353,9 +353,9 @@ class _RegisterEmployerClassState extends State<RegisterEmployerClass> {
               const SizedBox(
                 height: 20,
               ),
-              InkWell(
-                  onTap: () => registerEmployerImgaf(context),
-                  child: Text("Send email")),
+              // InkWell(
+              //     onTap: () => registerEmployerImgaf(context),
+              //     child: Text("Send email")),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: OutlinedButton(

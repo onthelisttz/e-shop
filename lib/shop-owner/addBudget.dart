@@ -271,7 +271,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Important Products',
+                      'Important Items',
                       style: TextStyle(
                           fontSize: 14, letterSpacing: 1, color: Colors.black),
                     ),
@@ -299,7 +299,7 @@ class _BudgetScreenState extends State<BudgetScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Unimportant Products',
+                      'Unimportant Items',
                       style: TextStyle(
                           fontSize: 14, letterSpacing: 1, color: Colors.black),
                     ),
